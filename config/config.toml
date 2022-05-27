@@ -1,0 +1,22 @@
+[ApiHttp]
+Addr = "0.0.0.0"
+Port = 8081
+JwtSecret = "secret"
+
+[IMRpcService]
+Addr = "0.0.0.0"
+Port = 8080
+
+[MySql]
+Host = "127.0.0.1"
+Port = 3306
+Username = "go_im_test"
+Password = ""
+Db = "go_im_test"
+Charset = "utf8mb4"
+
+[Redis]
+Host = "127.0.0.1"
+Port = 6378
+Password = ""
+Db = 9
