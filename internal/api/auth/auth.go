@@ -144,11 +144,7 @@ func (*AuthApi) GuestRegister(ctx *route.Context, req *GuestRegisterRequest) err
 		Token:   token,
 		Servers: host,
 	}
-	resp := messages.NewMessage(ctx.Seq, comm2.ActionSuccess, tk)
-
-	ctx.Uid = uid
-	ctx.Device = 3
-	ctx.Response(resp)
+	ctx.ReturnSuccess(&tk)
 	return nil
 }
 

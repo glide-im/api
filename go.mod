@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/gin-gonic/gin v1.7.7
-	github.com/glide-im/glide v0.0.0-20220526093756-db58e48fc558
+	github.com/glide-im/glide v1.0.0
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/spf13/viper v1.11.0

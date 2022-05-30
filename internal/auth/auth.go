@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/glide-im/api/internal/api/comm"
 	"github.com/glide-im/api/internal/dao/userdao"
+	"github.com/glide-im/glide/pkg/auth"
+	"github.com/glide-im/glide/pkg/gate"
 	"github.com/glide-im/glide/pkg/logger"
 	"time"
 )
@@ -16,6 +18,21 @@ type Result struct {
 	Uid     int64
 	Token   string
 	Servers []string
+}
+
+func (r Result) Auth(c *gate.Info, t *auth.Token) (*auth.Result, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r Result) RemoveToken(t *auth.Token) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r Result) GetToken(c *gate.Info) (*auth.Token, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func ParseToken(token string) (*AuthInfo, error) {

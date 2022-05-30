@@ -23,10 +23,12 @@ type ClientManagerInterface interface {
 type clientInterface struct{}
 
 func (c clientInterface) Logout(uid int64, device int64) error {
+	// TODO: 调用 IM 服务接口
 	return nil
 }
 
 func (c clientInterface) EnqueueMessage(uid int64, device int64, message *messages.GlideMessage) error {
 	logger.W("clientInterface.EnqueueMessage not implement")
+	// TODO: 调用 IM 服务接口
 	return nil
 }
