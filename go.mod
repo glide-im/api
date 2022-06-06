@@ -3,6 +3,7 @@ module github.com/glide-im/api
 go 1.18
 
 require (
+	github.com/glide-im/im-service v1.0.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/glide-im/glide v1.0.0
 	github.com/go-redis/redis v6.15.9+incompatible

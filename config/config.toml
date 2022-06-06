@@ -4,8 +4,9 @@ Port = 8081
 JwtSecret = "secret"
 
 [IMRpcService]
-Addr = "0.0.0.0"
-Port = 8080
+Addr = "127.0.0.1"
+Port = 8092
+Name = "im_rpc_server"
 
 [MySql]
 Host = "127.0.0.1"

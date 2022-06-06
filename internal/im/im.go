@@ -1,12 +1,15 @@
 package im
 
 import (
+	"github.com/glide-im/glide/pkg/gate"
 	"github.com/glide-im/glide/pkg/logger"
 	"github.com/glide-im/glide/pkg/messages"
+	"github.com/glide-im/im-service/pkg/client"
+	"github.com/glide-im/im-service/pkg/rpc"
 )
 
 // ClientInterface 客户端连接相关接口
-var ClientInterface ClientManagerInterface = &clientInterface{}
+var ClientInterface ClientManagerInterface
 
 func SendMessage(uid int64, device int64, m *messages.GlideMessage) {
 	err := ClientInterface.EnqueueMessage(uid, device, m)
@@ -20,15 +23,35 @@ type ClientManagerInterface interface {
 	EnqueueMessage(uid int64, device int64, message *messages.GlideMessage) error
 }
 
-type clientInterface struct{}
-
-func (c clientInterface) Logout(uid int64, device int64) error {
-	// TODO: 调用 IM 服务接口
-	return nil
+func MustSetupClient(addr string, port int, name string) {
+	options := &rpc.ClientOptions{
+		Addr: addr,
+		Port: port,
+		Name: name,
+	}
+	cli, err := client.NewIMServiceClient(options)
+	if err != nil {
+		panic(err)
+	}
+	ClientInterface = &imServiceRpcClient{cli}
 }
 
-func (c clientInterface) EnqueueMessage(uid int64, device int64, message *messages.GlideMessage) error {
-	logger.W("clientInterface.EnqueueMessage not implement")
-	// TODO: 调用 IM 服务接口
-	return nil
+type imServiceRpcClient struct {
+	cli *client.IMServiceClient
+}
+
+func (c imServiceRpcClient) Logout(uid int64, device int64) error {
+	id, err := gate.GenTempID("")
+	if err != nil {
+		return err
+	}
+	err = c.cli.SetClientID(gate.NewID("", uid, device), id)
+	if err != nil {
+		return err
+	}
+	return c.cli.ExitClient(gate.NewID("", uid, device))
+}
+
+func (c imServiceRpcClient) EnqueueMessage(uid int64, device int64, message *messages.GlideMessage) error {
+	return c.cli.EnqueueMessage(gate.NewID("", uid, device), message)
 }
