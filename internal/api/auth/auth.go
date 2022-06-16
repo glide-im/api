@@ -10,6 +10,7 @@ import (
 	"github.com/glide-im/api/internal/im"
 	"github.com/glide-im/glide/pkg/messages"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -60,13 +61,14 @@ type AuthApi struct {
 
 func (*AuthApi) AuthToken(ctx *route.Context, req *AuthTokenRequest) error {
 
-	result, err := auth.Auth(ctx.Uid, ctx.Device, &auth.Token{Token: req.Token})
+	result, err := auth.Auth(ctx.Uid, ctx.Device, req.Token)
 	if err != nil {
 		return ErrInvalidToken
 	}
+	uid, err := strconv.ParseInt(result.Uid, 10, 64)
 	resp := AuthResponse{
 		Token:   result.Token,
-		Uid:     result.Uid,
+		Uid:     uid,
 		Servers: host,
 	}
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, resp))
@@ -85,7 +87,7 @@ func (*AuthApi) SignIn(ctx *route.Context, request *SignInRequest) error {
 		return comm2.NewDbErr(err)
 	}
 
-	token, err := auth.GenerateToken(uid, request.Device)
+	token, err := auth.GenerateTokenExpire(uid, request.Device, 24*3)
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}

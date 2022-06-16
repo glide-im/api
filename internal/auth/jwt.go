@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/glide-im/api/internal/api/comm"
+	"github.com/glide-im/glide/pkg/auth/jwt_auth"
 	"github.com/golang-jwt/jwt"
 	"time"
 )
@@ -9,6 +10,7 @@ import (
 var jwtSecret []byte
 
 func SetJwtSecret(secret []byte) {
+	jwtAuth = jwt_auth.NewAuthorizeImpl(string(secret))
 	jwtSecret = secret
 }
 

@@ -1,86 +1,44 @@
 package auth
 
 import (
-	"fmt"
 	"github.com/glide-im/api/internal/api/comm"
-	"github.com/glide-im/api/internal/dao/userdao"
 	"github.com/glide-im/glide/pkg/auth"
-	"github.com/glide-im/glide/pkg/gate"
-	"github.com/glide-im/glide/pkg/logger"
+	"github.com/glide-im/glide/pkg/auth/jwt_auth"
+	"strconv"
 	"time"
 )
 
-type Token struct {
-	Token string
-}
-
-type Result struct {
-	Uid     int64
-	Token   string
-	Servers []string
-}
-
-func (r Result) Auth(c *gate.Info, t *auth.Token) (*auth.Result, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (r Result) RemoveToken(t *auth.Token) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (r Result) GetToken(c *gate.Info) (*auth.Token, error) {
-	//TODO implement me
-	panic("implement me")
-}
+var jwtAuth *jwt_auth.JwtAuthorize
 
 func ParseToken(token string) (*AuthInfo, error) {
 	return parseJwt(token)
 }
 
-func Auth(from int64, device int64, t *Token) (*Result, error) {
+func Auth(from int64, device int64, t string) (*jwt_auth.Response, error) {
 
-	token, err := parseJwt(t.Token)
-	if err != nil {
-		return nil, fmt.Errorf("invalid token")
+	jwtAuthInfo := &jwt_auth.JwtAuthInfo{
+		UID:    strconv.FormatInt(from, 10),
+		Device: strconv.FormatInt(device, 10),
 	}
-	version, err := userdao.Dao.GetTokenVersion(token.Uid, token.Device)
-	if err != nil || version == 0 || version > token.Ver {
-		return nil, fmt.Errorf("invalid token")
-	}
-	if from == token.Uid && device == token.Device {
-		// logged in
-		logger.D("auth token for a connection is logged in")
-	}
+	result, err2 := jwtAuth.Auth(jwtAuthInfo, &auth.Token{Token: t})
 
-	return &Result{
-		Uid:     token.Uid,
-		Token:   t.Token,
-		Servers: nil,
-	}, nil
+	resp, ok := result.Response.(*jwt_auth.Response)
+	if !ok {
+		return nil, err2
+	}
+	return resp, err2
 }
 
-func GenerateTokenExpire(uid int64, device int64, expire int64) (string, error) {
+func GenerateTokenExpire(uid int64, device int64, expireHour int64) (string, error) {
 	jt := AuthInfo{
 		Uid:    uid,
 		Device: device,
 		Ver:    genJwtVersion(),
 	}
-	expir := time.Now().Add(time.Hour * time.Duration(expire))
+	expir := time.Now().Add(time.Hour * time.Duration(expireHour))
 	token, err := genJwtExp(jt, expir)
 	if err != nil {
 		return "", comm.NewUnexpectedErr("login failed", err)
 	}
-
-	err = userdao.Dao.SetTokenVersion(jt.Uid, jt.Device, jt.Ver, time.Duration(jt.ExpiresAt))
-	if err != nil {
-		return "", fmt.Errorf("generate token failed")
-	}
-
 	return token, nil
-}
-
-func GenerateToken(uid int64, device int64) (string, error) {
-	return GenerateTokenExpire(uid, device, 24*3)
 }

@@ -148,7 +148,7 @@ func (r *Rt) invokeHandleFunc(info *Context, data interface{}) error {
 			if !ok {
 				return errors.New("not type of *messages.GlideMessage")
 			}
-			err := m.DeserializeData(reqParam)
+			err := m.Data.Deserialize(reqParam)
 			if err != nil {
 				return err
 			}

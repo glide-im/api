@@ -4,8 +4,9 @@ import (
 	"github.com/glide-im/glide/pkg/gate"
 	"github.com/glide-im/glide/pkg/logger"
 	"github.com/glide-im/glide/pkg/messages"
+	"github.com/glide-im/glide/pkg/rpc"
 	"github.com/glide-im/im-service/pkg/client"
-	"github.com/glide-im/im-service/pkg/rpc"
+	"strconv"
 )
 
 // ClientInterface 客户端连接相关接口
@@ -24,12 +25,14 @@ type ClientManagerInterface interface {
 }
 
 func MustSetupClient(addr string, port int, name string) {
-	options := &rpc.ClientOptions{
-		Addr: addr,
-		Port: port,
-		Name: name,
+	opt := &rpc.ClientOptions{
+		Addr:        addr,
+		Port:        port,
+		Name:        name,
+		EtcdServers: nil,
+		Selector:    nil,
 	}
-	cli, err := client.NewIMServiceClient(options)
+	cli, err := client.NewIMServiceClient(opt)
 	if err != nil {
 		panic(err)
 	}
@@ -45,13 +48,14 @@ func (c imServiceRpcClient) Logout(uid int64, device int64) error {
 	if err != nil {
 		return err
 	}
-	err = c.cli.SetClientID(gate.NewID("", uid, device), id)
+	err = c.cli.SetClientID(gate.NewID("", strconv.FormatInt(uid, 10), strconv.FormatInt(device, 10)), id)
 	if err != nil {
 		return err
 	}
-	return c.cli.ExitClient(gate.NewID("", uid, device))
+	return c.cli.ExitClient(gate.NewID("", strconv.FormatInt(uid, 10), strconv.FormatInt(device, 10)))
 }
 
 func (c imServiceRpcClient) EnqueueMessage(uid int64, device int64, message *messages.GlideMessage) error {
-	return c.cli.EnqueueMessage(gate.NewID("", uid, device), message)
+	c.cli.ExitClient(gate.NewID2("1"))
+	return c.cli.EnqueueMessage(gate.NewID("", strconv.FormatInt(uid, 10), strconv.FormatInt(device, 10)), message)
 }
