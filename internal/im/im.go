@@ -56,6 +56,5 @@ func (c imServiceRpcClient) Logout(uid int64, device int64) error {
 }
 
 func (c imServiceRpcClient) EnqueueMessage(uid int64, device int64, message *messages.GlideMessage) error {
-	c.cli.ExitClient(gate.NewID2("1"))
 	return c.cli.EnqueueMessage(gate.NewID("", strconv.FormatInt(uid, 10), strconv.FormatInt(device, 10)), message)
 }

@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"github.com/glide-im/api/internal/config"
+	"github.com/glide-im/glide/pkg/logger"
 	"github.com/go-redis/redis"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -60,5 +61,9 @@ func initRedis() {
 		PoolSize:     runtime.NumCPU() * 30,
 		MinIdleConns: 10,
 	})
-
+	result, err := Redis.Ping().Result()
+	if err != nil {
+		panic(err)
+	}
+	logger.D("redis ping: %s", result)
 }
