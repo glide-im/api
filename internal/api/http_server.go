@@ -55,18 +55,20 @@ func run(addr string, port int) error {
 
 func onParamValidateFailed(ctx *gin.Context, err error) {
 	logger.D("validate request param failed %v", err)
+	ctx.Status(http.StatusOK)
 	_ = ctx.BindJSON(CommonResponse{
 		Code: 300,
-		Msg:  "invalid parameter",
+		Msg:  "invalid parameter:" + err.Error(),
 		Data: nil,
 	})
 }
 
 func onParamError(ctx *gin.Context, err error) {
 	logger.E("resolve api param error %v", err)
+	ctx.Status(http.StatusOK)
 	_ = ctx.BindJSON(CommonResponse{
 		Code: 300,
-		Msg:  "parameter parse error",
+		Msg:  "parameter parse error: " + err.Error(),
 		Data: nil,
 	})
 }

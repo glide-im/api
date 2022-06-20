@@ -21,19 +21,21 @@ func (a *UserApi) UpdateUserProfile(msg *route.Context, request *UpdateProfileRe
 }
 
 func (a *UserApi) GetUserInfo(ctx *route.Context, request *InfoRequest) error {
-	info, err := userdao.UserInfoDao.GetUserSimpleInfo(request.Uid...)
-	if err != nil {
-		return comm2.NewDbErr(err)
-	}
 	//goland:noinspection ALL
 	resp := []InfoResponse{}
-	for _, i := range info {
-		resp = append(resp, InfoResponse{
-			Uid:      i.Uid,
-			Nickname: i.Nickname,
-			// Account:  i.Account,
-			Avatar: i.Avatar,
-		})
+	for _, u := range request.Uid {
+		si, err := userdao.UserInfoDao.GetUserSimpleInfo(u)
+		if err != nil {
+			continue
+		}
+		for _, i := range si {
+			resp = append(resp, InfoResponse{
+				Uid:      i.Uid,
+				Nickname: i.Nickname,
+				Account:  i.Account,
+				Avatar:   i.Avatar,
+			})
+		}
 	}
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, resp))
 	return nil

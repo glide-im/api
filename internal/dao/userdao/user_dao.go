@@ -27,6 +27,15 @@ func (d *UserInfoDaoImpl) DelUser(uid int64) error {
 	return common.ResolveError(query)
 }
 
+func (d *UserInfoDaoImpl) AccountExists(account string) (bool, error) {
+	var count int64
+	query := db.DB.Model(&User{}).Where("account = ?", account).Count(&count)
+	if err := common.ResolveError(query); err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
 func (d *UserInfoDaoImpl) HasUser(uid int64) (bool, error) {
 	var count int64
 	query := db.DB.Model(&User{}).Where("uid = ?", uid).Count(&count)

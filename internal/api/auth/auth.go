@@ -152,6 +152,14 @@ func (*AuthApi) GuestRegister(ctx *route.Context, req *GuestRegisterRequest) err
 
 func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 
+	exists, err := userdao.UserInfoDao.AccountExists(req.Account)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+	if exists {
+		return comm2.NewApiBizError(1004, "account already exists")
+	}
+
 	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
 	u := &userdao.User{
 		Account:  req.Account,
@@ -159,7 +167,7 @@ func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 		Nickname: nicknames[rnd.Intn(len(nicknames))],
 		Avatar:   avatars[rnd.Intn(len(avatars))],
 	}
-	err := userdao.UserInfoDao.AddUser(u)
+	err = userdao.UserInfoDao.AddUser(u)
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
