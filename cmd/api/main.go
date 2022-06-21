@@ -19,7 +19,7 @@ func main() {
 	auth.SetJwtSecret([]byte(secret))
 
 	im.MustSetupClient(config.IMRpcServer.Addr, config.IMRpcServer.Port, config.IMRpcServer.Name)
-	err := api.RunHttpServer(config.ApiHttp.Addr, config.ApiHttp.Port)
+	err := api.Run(config.ApiHttp.Addr, config.ApiHttp.Port)
 
 	if err != nil {
 		panic(err)

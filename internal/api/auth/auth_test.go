@@ -14,7 +14,7 @@ var authApi = AuthApi{}
 
 func init() {
 	db.Init()
-	im.ClientInterface = apidep.MockClientManager{}
+	im.IM = apidep.MockClientManager{}
 }
 
 func getContext(uid int64, device int64) *route.Context {

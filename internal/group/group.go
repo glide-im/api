@@ -1,9 +1,9 @@
 package group
 
 // Interface 群相关接口
-var Interface GroupInterface = &groupInterface{}
+var Interface Service = &groupInterface{}
 
-type GroupInterface interface {
+type Service interface {
 	PutMember(gid int64, mb []int64) error
 	RemoveMember(gid int64, uid ...int64) error
 	CreateGroup(gid int64) error

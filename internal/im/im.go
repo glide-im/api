@@ -9,21 +9,25 @@ import (
 	"strconv"
 )
 
-// ClientInterface 客户端连接相关接口
-var ClientInterface ClientManagerInterface
+var IM Service
 
+// SendMessage 发送消息到指定用户
 func SendMessage(uid int64, device int64, m *messages.GlideMessage) {
-	err := ClientInterface.EnqueueMessage(uid, device, m)
+	id := strconv.FormatInt(uid, 10)
+	d := strconv.FormatInt(device, 10)
+	err := IM.EnqueueMessage(id, d, m)
 	if err != nil {
 		logger.E("SendMessage error: %v", err)
 	}
 }
 
-type ClientManagerInterface interface {
-	Logout(uid int64, device int64) error
-	EnqueueMessage(uid int64, device int64, message *messages.GlideMessage) error
+// Service IM 服务的接口
+type Service interface {
+	Logout(uid string, device string) error
+	EnqueueMessage(uid string, device string, message *messages.GlideMessage) error
 }
 
+// MustSetupClient 初始化 IM 服务 RPC 客户端
 func MustSetupClient(addr string, port int, name string) {
 	opt := &rpc.ClientOptions{
 		Addr:        addr,
@@ -36,25 +40,25 @@ func MustSetupClient(addr string, port int, name string) {
 	if err != nil {
 		panic(err)
 	}
-	ClientInterface = &imServiceRpcClient{cli}
+	IM = &imServiceRpcClient{cli}
 }
 
 type imServiceRpcClient struct {
 	cli *client.IMServiceClient
 }
 
-func (c imServiceRpcClient) Logout(uid int64, device int64) error {
+func (c imServiceRpcClient) Logout(uid string, device string) error {
 	id, err := gate.GenTempID("")
 	if err != nil {
 		return err
 	}
-	err = c.cli.SetClientID(gate.NewID("", strconv.FormatInt(uid, 10), strconv.FormatInt(device, 10)), id)
+	err = c.cli.SetClientID(gate.NewID("", uid, device), id)
 	if err != nil {
 		return err
 	}
-	return c.cli.ExitClient(gate.NewID("", strconv.FormatInt(uid, 10), strconv.FormatInt(device, 10)))
+	return c.cli.ExitClient(gate.NewID("", uid, device))
 }
 
-func (c imServiceRpcClient) EnqueueMessage(uid int64, device int64, message *messages.GlideMessage) error {
-	return c.cli.EnqueueMessage(gate.NewID("", strconv.FormatInt(uid, 10), strconv.FormatInt(device, 10)), message)
+func (c imServiceRpcClient) EnqueueMessage(uid string, device string, message *messages.GlideMessage) error {
+	return c.cli.EnqueueMessage(gate.NewID("", uid, device), message)
 }

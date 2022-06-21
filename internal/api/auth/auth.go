@@ -181,7 +181,7 @@ func (a *AuthApi) Logout(ctx *route.Context) error {
 		return comm2.NewDbErr(err)
 	}
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, ""))
-	im.ClientInterface.Logout(ctx.Uid, ctx.Device)
+	_ = im.IM.Logout(strconv.FormatInt(ctx.Uid, 10), strconv.FormatInt(ctx.Device, 10))
 	return nil
 }
 
