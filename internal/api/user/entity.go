@@ -16,7 +16,11 @@ type InfoListResponse struct {
 }
 
 type UpdateProfileRequest struct {
+	Nickname string `validate:"required,gte=2,lte=16"`
+	Password string
+	Avatar   string `validate:"required,url"`
 }
+
 type ContactResponse struct {
 	Id     int64
 	Type   int8
@@ -29,12 +33,17 @@ type AddContacts struct {
 }
 
 type DeleteContactsRequest struct {
-	Uid []int64
+	Uid int64
 }
 
 type UpdateRemarkRequest struct {
 	Uid    int64
 	Remark string
+}
+
+type UpdateLastMidRequest struct {
+	Uid int64
+	Mid int64
 }
 
 type ContactApproval struct {

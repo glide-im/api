@@ -42,7 +42,7 @@ func (c ContactsDaoImpl) AddContacts(uid int64, id int64, type_ int8) error {
 func (c ContactsDaoImpl) DelContacts(uid int64, id int64, type_ int8) error {
 	contactsID := getContactsId(uid, id, type_)
 	query := db.DB.Where("fid = ?", contactsID).Delete(&Contacts{})
-	return common.ResolveError(query)
+	return common.JustError(query)
 }
 
 func (c ContactsDaoImpl) GetContacts(uid int64) ([]*Contacts, error) {
@@ -55,4 +55,30 @@ func (c ContactsDaoImpl) GetContactsByType(uid int64, type_ int) ([]*Contacts, e
 	var cs []*Contacts
 	query := db.DB.Model(&Contacts{}).Where("uid = ? AND `type` = ?", uid, type_).Find(&cs)
 	return cs, common.JustError(query)
+}
+
+func (c ContactsDaoImpl) UpdateContactRemark(uid int64, id int64, type_ int8, remark string) error {
+	contactsID := getContactsId(uid, id, type_)
+	contacts := &Contacts{
+		Fid:    contactsID,
+		Uid:    uid,
+		Id:     id,
+		Remark: remark,
+		Type:   type_,
+	}
+	query := db.DB.Where("fid = ?", contactsID).Updates(contacts)
+	return common.JustError(query)
+}
+
+func (c ContactsDaoImpl) UpdateContactLastMid(uid int64, id int64, type_ int8, lastMid int64) error {
+	contactsID := getContactsId(uid, id, type_)
+	contacts := &Contacts{
+		Fid:     contactsID,
+		Uid:     uid,
+		Id:      id,
+		LastMid: lastMid,
+		Type:    type_,
+	}
+	query := db.DB.Where("fid = ?", contactsID).Updates(contacts)
+	return common.JustError(query)
 }

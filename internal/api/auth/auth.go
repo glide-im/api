@@ -160,12 +160,12 @@ func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 		return comm2.NewApiBizError(1004, "account already exists")
 	}
 
-	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
+	//rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
 	u := &userdao.User{
 		Account:  req.Account,
 		Password: req.Password,
-		Nickname: nicknames[rnd.Intn(len(nicknames))],
-		Avatar:   avatars[rnd.Intn(len(avatars))],
+		Nickname: req.Nickname,
+		//Avatar:   nil,
 	}
 	err = userdao.UserInfoDao.AddUser(u)
 	if err != nil {

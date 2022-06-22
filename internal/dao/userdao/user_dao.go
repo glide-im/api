@@ -11,6 +11,12 @@ const (
 	ContactsTypeGroup = 2
 )
 
+const (
+	ContactsStatusKeep     = 1 // 正常关系
+	ContactsStatusApproval = 2 // 等待同意
+	ContactsStatusInvalid  = 3 // 双方不存在好友关系
+)
+
 var UserInfoDao = &UserInfoDaoImpl{}
 
 type UserInfoDaoImpl struct{}
@@ -101,5 +107,14 @@ func (d *UserInfoDaoImpl) GetUserSimpleInfo(uid ...int64) ([]*User, error) {
 
 func (d *UserInfoDaoImpl) update(uid int64, field string, value interface{}) error {
 	query := db.DB.Model(&User{}).Where("uid = ?", uid).Update(field, value)
+	return common.ResolveError(query)
+}
+
+func (d *UserInfoDaoImpl) UpdateProfile(uid int64, profile UpdateProfile) error {
+	query := db.DB.Model(&User{}).Where("uid = ?", uid).Updates(User{
+		Account:  profile.Avatar,
+		Nickname: profile.Nickname,
+		Password: profile.Password,
+	})
 	return common.ResolveError(query)
 }

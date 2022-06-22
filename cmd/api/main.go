@@ -7,6 +7,7 @@ import (
 	"github.com/glide-im/api/internal/dao"
 	"github.com/glide-im/api/internal/im"
 	"github.com/glide-im/api/internal/pkg/db"
+	"github.com/glide-im/api/internal/pkg/validate"
 )
 
 func main() {
@@ -14,6 +15,7 @@ func main() {
 
 	db.Init()
 	dao.Init()
+	validate.Init()
 
 	secret := config.ApiHttp.JwtSecret
 	auth.SetJwtSecret([]byte(secret))

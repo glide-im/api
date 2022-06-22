@@ -34,7 +34,8 @@ func initRoute() {
 	post("/api/contacts/list", userApi.GetContactList)
 	post("/api/contacts/approval", userApi.ContactApproval)
 	post("/api/contacts/del", userApi.DeleteContact)
-	post("/api/contacts/update", userApi.UpdateContactRemark)
+	post("/api/contacts/update/remark", userApi.UpdateContactRemark)
+	post("/api/contacts/update/mid", userApi.UpdateContactLastMid)
 
 	post("/api/user/info", userApi.GetUserInfo)
 	post("/api/user/profile", userApi.UserProfile)

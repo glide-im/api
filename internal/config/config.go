@@ -7,7 +7,12 @@ var (
 	Redis       *RedisConf
 	ApiHttp     *ApiHttpConf
 	IMRpcServer *IMRpcServerConf
+	AppConfig   *AppConfigConf
 )
+
+type AppConfigConf struct {
+	APP_URL string
+}
 
 type ApiHttpConf struct {
 	Addr      string
@@ -65,6 +70,7 @@ func Load() error {
 		Redis        *RedisConf
 		ApiHttp      *ApiHttpConf
 		IMRpcService *IMRpcServerConf
+		AppConfig    *AppConfigConf
 	}{}
 
 	err = viper.Unmarshal(&c)
@@ -75,6 +81,7 @@ func Load() error {
 	MySql = c.MySql
 	ApiHttp = c.ApiHttp
 	IMRpcServer = c.IMRpcService
+	AppConfig = c.AppConfig
 
 	return err
 }

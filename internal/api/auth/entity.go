@@ -15,6 +15,7 @@ type LogoutRequest struct {
 
 type RegisterRequest struct {
 	Account  string
+	Nickname string
 	Password string
 }
 

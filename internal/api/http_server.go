@@ -156,7 +156,7 @@ func getHandler(path string, fn interface{}) func(ctx *gin.Context) {
 			if validate {
 				err = param.(Validatable).Validate()
 				if err != nil {
-					onParamValidateFailed(context, err)
+					onHandlerValidateErr(context, err)
 					return
 				}
 			}
@@ -189,7 +189,6 @@ func reflectHandleFunc(path string, handleFunc interface{}) (reflect.Value, refl
 	}
 
 	argNum := typeHandleFunc.NumIn()
-
 	if argNum == 0 || argNum > 2 {
 		panic("route handleFunc bad arguments, path: " + path)
 	}
@@ -209,7 +208,8 @@ func reflectHandleFunc(path string, handleFunc interface{}) (reflect.Value, refl
 		if typeParam.Kind() != reflect.Struct {
 			panic("the second arg of handleFunc must struct")
 		}
-		_, shouldValidate = reflect.New(typeParam).Interface().(route.Context)
+		_, shouldValidate = reflect.New(typeParam).Interface().(Validatable)
+
 	}
 
 	// reflect first param
@@ -217,5 +217,16 @@ func reflectHandleFunc(path string, handleFunc interface{}) (reflect.Value, refl
 		panic("route handleFunc bad arguments, route: " + path)
 	}
 	valueHandleFunc := reflect.ValueOf(handleFunc)
+
+	fmt.Println("shouldValidate", shouldValidate)
 	return valueHandleFunc, typeParam, argNum == 2, shouldValidate
+}
+
+func onHandlerValidateErr(ctx *gin.Context, err error) {
+	ctx.JSON(http.StatusOK, CommonResponse{
+		Code: 40001,
+		Msg:  err.Error(),
+		Data: nil,
+	})
+	return
 }

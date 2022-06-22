@@ -15,8 +15,18 @@ func (a *UserApi) GetUserProfile(msg *route.Context) error {
 	return nil
 }
 
-func (a *UserApi) UpdateUserProfile(msg *route.Context, request *UpdateProfileRequest) error {
+func (a *UserApi) UpdateUserProfile(ctx *route.Context, request *UpdateProfileRequest) error {
 	// TODO 2021-11-29 更新我的信息
+	user := userdao.UpdateProfile{
+		Nickname: request.Nickname,
+		Password: request.Password,
+		Avatar:   request.Password,
+	}
+	err := userdao.UserInfoDao.UpdateProfile(ctx.Uid, user)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, ""))
 	return nil
 }
 

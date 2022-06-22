@@ -11,11 +11,13 @@ type User struct {
 }
 
 type Contacts struct {
-	Fid    string `gorm:"primaryKey"`
-	Uid    int64
-	Id     int64
-	Remark string
-	Type   int8
+	Fid     string `gorm:"primaryKey"`
+	Uid     int64
+	Id      int64
+	Remark  string
+	Type    int8
+	Status  int8
+	LastMid int64
 }
 
 type LoginState struct {

@@ -13,12 +13,29 @@ import (
 )
 
 func (a *UserApi) DeleteContact(ctx *route.Context, request *DeleteContactsRequest) error {
-	// TODO 2021-11-29
+	err := userdao.ContactsDao.DelContacts(ctx.Uid, request.Uid, userdao.ContactsTypeUser)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, ""))
 	return nil
 }
 
 func (a *UserApi) UpdateContactRemark(ctx *route.Context, request *UpdateRemarkRequest) error {
-	// TODO 2021-11-29
+	err := userdao.ContactsDao.UpdateContactRemark(ctx.Uid, request.Uid, userdao.ContactsTypeUser, request.Remark)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, ""))
+	return nil
+}
+
+func (a *UserApi) UpdateContactLastMid(ctx *route.Context, request *UpdateLastMidRequest) error {
+	err := userdao.ContactsDao.UpdateContactLastMid(ctx.Uid, request.Uid, userdao.ContactsTypeUser, request.Mid)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, ""))
 	return nil
 }
 
