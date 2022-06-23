@@ -32,7 +32,7 @@ func (*ChatMsgApi) GetChatMessageHistory(ctx *route.Context, request *ChatHistor
 	if request.BeforeMid == 0 {
 		request.BeforeMid = math.MaxInt64
 	}
-	ms, err := msgdao.ChatMsgDaoImpl.GetChatMessagesBySession(ctx.Uid, request.Uid, request.BeforeMid, 20)
+	ms, err := msgdao.ChatMsgDaoImpl.GetChatMessagesBySession(ctx.Uid, request.Uid, request.BeforeMid, request.PageSize)
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}

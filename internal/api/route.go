@@ -41,8 +41,10 @@ func initRoute() {
 	post("/api/user/profile", userApi.UserProfile)
 	post("/api/user/profile/update", userApi.UpdateUserProfile)
 
-	msgApi := msg.MsgApi{}
+	toolApi := cs.ToolApi{}
+	post("/api/tool/get-qiniu-token", toolApi.GetQiniuToken)
 
+	msgApi := msg.MsgApi{}
 	post("/api/msg/id", msgApi.GetMessageID)
 	post("/api/msg/group/history", msgApi.GetGroupMessageHistory)
 	post("/api/msg/group/recent", msgApi.GetRecentGroupMessage)

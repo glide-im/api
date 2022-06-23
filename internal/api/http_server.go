@@ -217,8 +217,6 @@ func reflectHandleFunc(path string, handleFunc interface{}) (reflect.Value, refl
 		panic("route handleFunc bad arguments, route: " + path)
 	}
 	valueHandleFunc := reflect.ValueOf(handleFunc)
-
-	fmt.Println("shouldValidate", shouldValidate)
 	return valueHandleFunc, typeParam, argNum == 2, shouldValidate
 }
 

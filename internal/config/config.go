@@ -1,17 +1,25 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"fmt"
+	"github.com/spf13/viper"
+)
 
 var (
 	MySql       *MySqlConf
 	Redis       *RedisConf
 	ApiHttp     *ApiHttpConf
 	IMRpcServer *IMRpcServerConf
-	AppConfig   *AppConfigConf
+	Qiniu       *QiniuConfigConf
 )
 
-type AppConfigConf struct {
-	APP_URL string
+type QiniuConfigConf struct {
+	QINIU_SK         string
+	QINIU_AK         string
+	QINIU_BUKET_PATH string
+	QINIU_HOST       string
+	QINIU_UPLOAD_URL string
+	QINIU_UPLOAD_DIR string
 }
 
 type ApiHttpConf struct {
@@ -70,7 +78,7 @@ func Load() error {
 		Redis        *RedisConf
 		ApiHttp      *ApiHttpConf
 		IMRpcService *IMRpcServerConf
-		AppConfig    *AppConfigConf
+		Qiniu        *QiniuConfigConf
 	}{}
 
 	err = viper.Unmarshal(&c)
@@ -81,7 +89,8 @@ func Load() error {
 	MySql = c.MySql
 	ApiHttp = c.ApiHttp
 	IMRpcServer = c.IMRpcService
-	AppConfig = c.AppConfig
+	Qiniu = c.Qiniu
 
+	fmt.Println("QiniuConfig", Qiniu)
 	return err
 }

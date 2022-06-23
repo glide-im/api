@@ -64,6 +64,7 @@ type RecentMessagesResponse struct {
 type ChatHistoryRequest struct {
 	Uid       int64
 	BeforeMid int64
+	PageSize  int
 }
 
 type AckOfflineMessageRequest struct {

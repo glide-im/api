@@ -3,6 +3,14 @@ Addr = "0.0.0.0"
 Port = 8081
 JwtSecret = "secret"
 
+[Qiniu]
+QINIU_SK=
+QINIU_AK=
+QINIU_BUKET_PATH=
+QINIU_HOST=
+QINIU_UPLOAD_URL=
+QINIU_UPLOAD_DIR=
+
 [IMRpcService]
 Addr = "127.0.0.1"
 Port = 8092
