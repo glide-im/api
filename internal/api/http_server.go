@@ -123,6 +123,7 @@ func getContext(ctx *gin.Context) *route.Context {
 			}
 			ctx.JSON(http.StatusOK, &response)
 		},
+		Context: ctx,
 	}
 	a, exists := ctx.Get(CtxKeyAuthInfo)
 	if exists {
@@ -150,6 +151,7 @@ func getHandler(path string, fn interface{}) func(ctx *gin.Context) {
 			param := reflect.New(paramType).Interface()
 			err := context.BindJSON(&param)
 			if err != nil {
+				fmt.Println("err", err)
 				onParamError(context, errors.New("invalid parameter"))
 				return
 			}

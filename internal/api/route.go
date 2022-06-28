@@ -7,6 +7,7 @@ import (
 	"github.com/glide-im/api/internal/api/groups"
 	"github.com/glide-im/api/internal/api/msg"
 	"github.com/glide-im/api/internal/api/user"
+	"github.com/glide-im/api/internal/api/wrapper/articles"
 )
 
 func initRoute() {
@@ -44,6 +45,13 @@ func initRoute() {
 	toolApi := cs.ToolApi{}
 	post("/api/tool/get-qiniu-token", toolApi.GetQiniuToken)
 
+	articleApi := articles.ArticleApi{}
+	post("/api/articles/store", articleApi.Store)
+	post("/api/articles/:id", articleApi.Update)
+	_delete("/api/articles/delete/:id", articleApi.Delete)
+	post("/api/articles/order", articleApi.Order)
+	get("/api/articles/list", articleApi.List)
+
 	msgApi := msg.MsgApi{}
 	post("/api/msg/id", msgApi.GetMessageID)
 	post("/api/msg/group/history", msgApi.GetGroupMessageHistory)
@@ -70,6 +78,15 @@ func postNoAuth(path string, fn interface{}) {
 func getNoAuth(path string, fn interface{}) {
 	rt.GET(path, getHandler(path, fn))
 }
+
 func post(path string, fn interface{}) {
 	useAuth().POST(path, getHandler(path, fn))
+}
+
+func _delete(path string, fn interface{}) {
+	useAuth().DELETE(path, getHandler(path, fn))
+}
+
+func get(path string, fn interface{}) {
+	useAuth().GET(path, getHandler(path, fn))
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/glide-im/api/internal/api/comm"
 	"github.com/glide-im/glide/pkg/messages"
 	"reflect"
@@ -46,11 +47,12 @@ func (p *path) next() (string, bool) {
 }
 
 type Context struct {
-	Uid    int64
-	Device int64
-	Seq    int64
-	Action string
-	R      func(message *messages.GlideMessage)
+	Uid     int64
+	Device  int64
+	Seq     int64
+	Action  string
+	R       func(message *messages.GlideMessage)
+	Context *gin.Context
 
 	done bool
 }
