@@ -1,13 +1,16 @@
 package userdao
 
+import "github.com/glide-im/api/internal/dao/wrapper/category"
+
 type User struct {
 	Uid      int64  `gorm:"primaryKey"`
 	Account  string `gorm:"unique"`
 	Nickname string
 	Password string
 	Avatar   string
-
 	CreateAt int64
+
+	CategoryUser []category.CategoryUser
 }
 
 type Contacts struct {

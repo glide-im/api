@@ -4,6 +4,7 @@ import (
 	route "github.com/glide-im/api/internal/api/router"
 	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/dao/wrapper/category"
+	"github.com/spf13/cast"
 )
 
 type CategoryApi struct {
@@ -67,6 +68,18 @@ func (a *CategoryApi) Order(ctx *route.Context, request *CategoryOrderRequest) e
 	for _, order := range orders {
 		model := category.CategoryDao.GetModel(1)
 		model.Where("id = ?", order.ID).Update("weight", order.Weight)
+	}
+	ctx.ReturnSuccess(nil)
+	return nil
+}
+
+// 设置用户的分类
+func (a *CategoryApi) SetUserCategory(ctx *route.Context, request *CategoryUserRequest) error {
+	categoryIds := request.CategoryIds
+	uid := ctx.Context.Param("uid")
+	err := category.CategoryUserDao.Updates(cast.ToInt64(uid), categoryIds)
+	if err != nil {
+		return err
 	}
 	ctx.ReturnSuccess(nil)
 	return nil

@@ -13,6 +13,10 @@ type CategoryStoreRequest struct {
 	ID     int
 }
 
+type CategoryUserRequest struct {
+	CategoryIds []int64 `json:"category_ids" validate:"required"`
+}
+
 type Orders struct {
 	ID     int `validate:"required"`
 	Weight int `validate:"required"`
@@ -37,4 +41,8 @@ func (s *CategoryStoreRequest) Validate() error {
 	}
 
 	return nil
+}
+
+func (s *CategoryUserRequest) Validate() error {
+	return validate.ValidateHandle(s)
 }

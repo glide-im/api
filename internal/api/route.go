@@ -60,6 +60,7 @@ func initRoute() {
 	_delete("/api/category/delete/:id", CategoryApi.Delete)
 	post("/api/category/order", CategoryApi.Order)
 	get("/api/category/list", CategoryApi.List)
+	post("/api/category/user/:uid", CategoryApi.SetUserCategory)
 
 	msgApi := msg.MsgApi{}
 	post("/api/msg/id", msgApi.GetMessageID)
