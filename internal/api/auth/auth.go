@@ -150,6 +150,39 @@ func (*AuthApi) GuestRegister(ctx *route.Context, req *GuestRegisterRequest) err
 	return nil
 }
 
+func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request) error {
+	fingerprintId := req.FingerprintId
+
+	u := &userdao.User{
+		Account:  fingerprintId,
+		Password: "",
+		Nickname: fingerprintId,
+		Avatar:   "",
+	}
+	err := userdao.UserInfoDao.AddGuestUser(u)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+
+	uid, err := userdao.Dao.GetUidInfoByLogin(fingerprintId, "")
+	if err != nil || uid == 0 {
+		if err == common.ErrNoRecordFound || uid == 0 {
+			return ErrSignInAccountInfo
+		}
+		return comm2.NewDbErr(err)
+	}
+
+	token, err := auth.GenerateTokenExpire(uid, 3, 24*7)
+
+	tk := AuthResponse{
+		Uid:     uid,
+		Token:   token,
+		Servers: host,
+	}
+	ctx.ReturnSuccess(&tk)
+	return nil
+}
+
 func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 
 	exists, err := userdao.UserInfoDao.AccountExists(req.Account)

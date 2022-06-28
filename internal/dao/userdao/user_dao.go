@@ -2,6 +2,7 @@ package userdao
 
 import (
 	"github.com/glide-im/api/internal/dao/common"
+	"github.com/glide-im/api/internal/dao/uid"
 	"github.com/glide-im/api/internal/pkg/db"
 	"time"
 )
@@ -23,6 +24,13 @@ type UserInfoDaoImpl struct{}
 
 func (d *UserInfoDaoImpl) AddUser(u *User) error {
 	u.Uid = 0
+	u.CreateAt = time.Now().Unix()
+	query := db.DB.Create(u)
+	return common.ResolveError(query)
+}
+
+func (d *UserInfoDaoImpl) AddGuestUser(u *User) error {
+	u.Uid = uid.GenUid()
 	u.CreateAt = time.Now().Unix()
 	query := db.DB.Create(u)
 	return common.ResolveError(query)
