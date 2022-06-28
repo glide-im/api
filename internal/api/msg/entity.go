@@ -1,6 +1,8 @@
 package msg
 
-import "github.com/glide-im/api/internal/dao/msgdao"
+import (
+	"github.com/glide-im/api/internal/dao/msgdao"
+)
 
 type MessageResponse struct {
 	Mid      int64
@@ -46,6 +48,7 @@ type SessionResponse struct {
 	LastMid  int64
 	UpdateAt int64
 	CreateAt int64
+	Message  msgdao.ChatMessage
 }
 
 type RecentChatMessageRequest struct {

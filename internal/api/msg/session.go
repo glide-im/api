@@ -1,6 +1,7 @@
 package msg
 
 import (
+	"fmt"
 	comm2 "github.com/glide-im/api/internal/api/comm"
 	"github.com/glide-im/api/internal/api/router"
 	"github.com/glide-im/api/internal/dao/msgdao"
@@ -48,6 +49,7 @@ func (a *MsgApi) GetRecentSessions(ctx *route.Context) error {
 	}
 	//goland:noinspection GoPreferNilSlice
 	sr := []*SessionResponse{}
+	var mids []int64
 	for _, s := range session {
 		to := s.Uid2
 		if s.Uid2 == ctx.Uid {
@@ -62,7 +64,18 @@ func (a *MsgApi) GetRecentSessions(ctx *route.Context) error {
 			UpdateAt: s.UpdateAt,
 			CreateAt: s.CreateAt,
 		})
+		mids = append(mids, s.LastMID)
 	}
+	fmt.Println(mids)
+	err, _messages := msgdao.SessionDaoImpl.GetMessagesByMids(mids)
+	if err != nil {
+		return err
+	}
+	for _, s := range sr {
+		s.Message = _messages[s.LastMid]
+	}
+	fmt.Println(sr)
+
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, sr))
 	return nil
 }

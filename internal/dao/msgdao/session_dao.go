@@ -1,6 +1,7 @@
 package msgdao
 
 import (
+	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/pkg/db"
 	"github.com/glide-im/glide/pkg/logger"
 	"github.com/go-redis/redis"
@@ -75,6 +76,19 @@ func (s *sessionDaoImpl) CleanUserSessionUnread(uid1, uid2 int64, uid int64) err
 	}
 	_, err := db.Redis.HSet(keySession+id, key, 0).Result()
 	return err
+}
+
+func (s *sessionDaoImpl) GetMessagesByMids(mids []int64) (error, map[int64]ChatMessage) {
+	messages := []ChatMessage{}
+	var _messages map[int64]ChatMessage
+	query := db.DB.Where(" m_id IN (?)", mids).Find(&messages)
+	if err := common.ResolveError(query); err != nil {
+		return err, _messages
+	}
+	for _, message := range messages {
+		_messages[message.MID] = message
+	}
+	return nil, _messages
 }
 
 func (s *sessionDaoImpl) GetSession(uid int64, uid2 int64) (*Session, error) {

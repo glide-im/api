@@ -57,6 +57,7 @@ type SessionDao interface {
 	CreateSession(uid1 int64, uid2 int64, updateAt int64) (*Session, error)
 	UpdateOrCreateSession(uid1 int64, uid2 int64, sender int64, mid int64, sendAt int64) error
 	GetRecentSession(uid int64, updateBefore int64, pageSize int64) ([]*Session, error)
+	GetMessagesByMids(mids []int64) (error, map[int64]ChatMessage)
 }
 
 type CacheDao interface {

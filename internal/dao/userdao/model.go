@@ -1,7 +1,5 @@
 package userdao
 
-import "github.com/glide-im/api/internal/dao/wrapper/category"
-
 type User struct {
 	Uid      int64  `gorm:"primaryKey"`
 	Account  string `gorm:"unique"`
@@ -10,7 +8,7 @@ type User struct {
 	Avatar   string
 	CreateAt int64
 
-	CategoryUser []category.CategoryUser
+	//CategoryUser []category.CategoryUser `gorm:"foreignKey:Uid;references:Uid"`
 }
 
 type Contacts struct {
