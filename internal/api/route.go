@@ -8,6 +8,7 @@ import (
 	"github.com/glide-im/api/internal/api/msg"
 	"github.com/glide-im/api/internal/api/user"
 	"github.com/glide-im/api/internal/api/wrapper/articles"
+	"github.com/glide-im/api/internal/api/wrapper/category"
 )
 
 func initRoute() {
@@ -52,6 +53,13 @@ func initRoute() {
 	_delete("/api/articles/delete/:id", articleApi.Delete)
 	post("/api/articles/order", articleApi.Order)
 	get("/api/articles/list", articleApi.List)
+
+	CategoryApi := category.CategoryApi{}
+	post("/api/category/store", CategoryApi.Store)
+	post("/api/category/:id", CategoryApi.Update)
+	_delete("/api/category/delete/:id", CategoryApi.Delete)
+	post("/api/category/order", CategoryApi.Order)
+	get("/api/category/list", CategoryApi.List)
 
 	msgApi := msg.MsgApi{}
 	post("/api/msg/id", msgApi.GetMessageID)
