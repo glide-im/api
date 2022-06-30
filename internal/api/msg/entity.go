@@ -48,7 +48,6 @@ type SessionResponse struct {
 	LastMid  int64
 	UpdateAt int64
 	CreateAt int64
-	Message  msgdao.ChatMessage
 }
 
 type RecentChatMessageRequest struct {
