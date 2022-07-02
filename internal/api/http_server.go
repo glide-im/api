@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -40,7 +39,6 @@ type Validatable interface {
 var g *gin.Engine
 var rt gin.IRoutes
 var typeRequestInfo = reflect.TypeOf((*route.Context)(nil))
-var typeError = reflect.TypeOf((*error)(nil)).Elem()
 
 //Run http server
 func Run(addr string, port int) error {
@@ -74,7 +72,7 @@ func onParamError(ctx *gin.Context, err error) {
 	})
 }
 
-func onHandlerFuncErr(ctx *gin.Context, err error, handlerParam []reflect.Value) {
+func onHandlerFuncErr(ctx *gin.Context, err error) {
 	errBiz, ok := err.(*comm.ErrApiBiz)
 	if ok {
 		ctx.JSON(http.StatusOK, CommonResponse{
@@ -88,14 +86,14 @@ func onHandlerFuncErr(ctx *gin.Context, err error, handlerParam []reflect.Value)
 	errUnexpected, ok := err.(*comm.ErrUnexpected)
 	if ok {
 		logger.D("api error, path:%s\n\t%s", ctx.FullPath(), errUnexpected.Line)
-		context, ok := handlerParam[0].Interface().(*route.Context)
-		if ok {
-			logger.D("uid:%d, device:%d", context.Uid, context.Device)
-		}
-		if len(handlerParam) == 2 {
-			marshal, _ := json.Marshal(handlerParam[1].Interface())
-			logger.D("param: %v", string(marshal))
-		}
+		//context, ok := handlerParam[0].Interface().(*route.Context)
+		//if ok {
+		//	logger.D("uid:%d, device:%d", context.Uid, context.Device)
+		//}
+		//if len(handlerParam) == 2 {
+		//	marshal, _ := json.Marshal(handlerParam[1].Interface())
+		//	logger.D("param: %v", string(marshal))
+		//}
 		logger.E("msg=%s, origin=%v", errUnexpected.Msg, errUnexpected.Origin)
 		ctx.JSON(http.StatusOK, CommonResponse{
 			Code: errUnexpected.Code,
@@ -171,7 +169,7 @@ func getHandler(path string, fn interface{}) func(ctx *gin.Context) {
 
 		if errV != nil {
 			err := errV.(error)
-			onHandlerFuncErr(context, err, handlerParam)
+			onHandlerFuncErr(context, err)
 		}
 	}
 }
