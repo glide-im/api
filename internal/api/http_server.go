@@ -48,6 +48,7 @@ func Run(addr string, port int) error {
 	g = gin.Default()
 	rt = g.Use(crosMiddleware())
 	initRoute()
+	initGuestRoute()
 
 	ad := fmt.Sprintf("%s:%d", addr, port)
 	return g.Run(ad)

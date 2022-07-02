@@ -152,6 +152,8 @@ func (*AuthApi) GuestRegister(ctx *route.Context, req *GuestRegisterRequest) err
 
 func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request) error {
 	fingerprintId := req.FingerprintId
+	var err error
+	var isAccount bool
 
 	u := &userdao.User{
 		Account:  fingerprintId,
@@ -159,9 +161,17 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 		Nickname: fingerprintId,
 		Avatar:   "",
 	}
-	err := userdao.UserInfoDao.AddGuestUser(u)
+
+	isAccount, err = userdao.UserInfoDao.AccountExists(fingerprintId)
 	if err != nil {
 		return comm2.NewDbErr(err)
+	}
+
+	if !isAccount {
+		err = userdao.UserInfoDao.AddGuestUser(u)
+		if err != nil {
+			return comm2.NewDbErr(err)
+		}
 	}
 
 	uid, err := userdao.Dao.GetUidInfoByLogin(fingerprintId, "")
