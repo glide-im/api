@@ -158,11 +158,11 @@ func use(middleware gin.HandlerFunc, r ...iRoute) *routeUse {
 	}
 }
 
-func post_(relativePath string, handlerFunc interface{}) *routeInfo {
+func post(relativePath string, handlerFunc interface{}) *routeInfo {
 	return handle(http.MethodPost, relativePath, handlerFunc)
 }
 
-func get_(relativePath string, handlerFunc interface{}) *routeInfo {
+func get(relativePath string, handlerFunc interface{}) *routeInfo {
 	return handle(http.MethodGet, relativePath, handlerFunc)
 }
 
