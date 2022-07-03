@@ -9,6 +9,12 @@ import (
 
 var jwtAuth *jwt_auth.JwtAuthorize
 
+var (
+	GUEST_DEVICE   = int64(3)
+	MOBILE_DEVICE  = int64(2)
+	DEFAULT_DEVICE = int64(1)
+)
+
 func ParseToken(token string) (*AuthInfo, error) {
 	var a = &jwt_auth.JwtAuthInfo{}
 	result, err := jwtAuth.Auth(a, &auth.Token{Token: token})

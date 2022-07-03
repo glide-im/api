@@ -32,6 +32,7 @@ func authMiddleware(context *gin.Context) {
 		context.Abort()
 		return
 	}
+
 	context.Set(CtxKeyAuthInfo, authInfo)
 	context.Next()
 }

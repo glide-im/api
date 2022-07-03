@@ -7,6 +7,7 @@ import (
 	"github.com/glide-im/api/internal/api/groups"
 	"github.com/glide-im/api/internal/api/msg"
 	"github.com/glide-im/api/internal/api/user"
+	platformApp "github.com/glide-im/api/internal/api/wrapper/app"
 	"github.com/glide-im/api/internal/api/wrapper/articles"
 	"github.com/glide-im/api/internal/api/wrapper/category"
 )
@@ -18,9 +19,10 @@ func initRoute() {
 
 	authApi := auth.AuthApi{}
 	postNoAuth("/api/auth/register", authApi.Register)
-	postNoAuth("/api/auth/guest", authApi.GuestRegister)
+	//postNoAuth("/api/auth/guest", authApi.GuestRegister)
 	postNoAuth("/api/auth/signin", authApi.SignIn)
 	postNoAuth("/api/auth/token", authApi.AuthToken)
+	postNoAuth("/api/auth/guestV2", authApi.GuestRegisterV2)
 	post("/api/auth/logout", authApi.Logout)
 
 	groupApi := groups.GroupApi{}
@@ -52,6 +54,13 @@ func initRoute() {
 	_delete("/api/articles/delete/:id", articleApi.Delete)
 	post("/api/articles/order", articleApi.Order)
 	get("/api/articles/list", articleApi.List)
+
+	platformAppApi := platformApp.PlatFromApi{}
+	post("/api/app/store", platformAppApi.Store)
+	post("/api/app/:id", platformAppApi.Update)
+	_delete("/api/app/delete/:id", platformAppApi.Delete)
+	get("/api/app/list", platformAppApi.List)
+	post("/api/app/guest-id", platformAppApi.GetGuestToId)
 
 	CategoryApi := category.CategoryApi{}
 	post("/api/category/store", CategoryApi.Store)

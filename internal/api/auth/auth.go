@@ -139,7 +139,7 @@ func (*AuthApi) GuestRegister(ctx *route.Context, req *GuestRegisterRequest) err
 		return comm2.NewDbErr(err)
 	}
 
-	token, err := auth.GenerateTokenExpire(uid, 3, 24*7)
+	token, err := auth.GenerateTokenExpire(uid, auth.GUEST_DEVICE, 24*7)
 
 	tk := AuthResponse{
 		Uid:     uid,
