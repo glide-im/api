@@ -2,8 +2,6 @@ package auth
 
 import (
 	"github.com/glide-im/api/internal/api/router"
-	"github.com/glide-im/api/internal/apidep"
-	"github.com/glide-im/api/internal/im"
 	"github.com/glide-im/api/internal/pkg/db"
 	"github.com/glide-im/glide/pkg/logger"
 	"github.com/glide-im/glide/pkg/messages"
@@ -14,7 +12,6 @@ var authApi = AuthApi{}
 
 func init() {
 	db.Init()
-	im.IM = apidep.MockClientManager{}
 }
 
 func getContext(uid int64, device int64) *route.Context {

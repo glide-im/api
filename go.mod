@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/gin-gonic/gin v1.7.7
-	github.com/glide-im/glide v1.3.0
+	github.com/glide-im/glide v1.3.1
 	github.com/glide-im/im-service v1.0.2
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/go-redis/redis v6.15.9+incompatible
