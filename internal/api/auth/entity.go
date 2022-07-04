@@ -40,6 +40,14 @@ type AuthResponse struct {
 	Servers []string
 }
 
+// GuestAuthResponse login or register result
+type GuestAuthResponse struct {
+	Token   string
+	Uid     int64
+	Servers []string
+	AppID   int64
+}
+
 func (request *GuestRegisterV2Request) Validate() error {
 	return validate.ValidateHandle(request)
 }

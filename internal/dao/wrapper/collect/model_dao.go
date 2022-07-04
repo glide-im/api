@@ -23,3 +23,8 @@ type CollectDataDaoH struct {
 func (a *CollectDataDaoH) GetModel(app_id int64, uid int64) *gorm.DB {
 	return db.DB.Model(&CollectData{}).Where("app_id = ? and uid = ?", app_id, uid)
 }
+
+func (a *CollectDataDaoH) updateOrCreate(CollectData CollectData) *gorm.DB {
+	_collectData := CollectData{}
+	db.DB.Model(&CollectData{}).Where("app_id = ?", CollectData.AppID, uid)
+}

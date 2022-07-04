@@ -1,6 +1,7 @@
 package app
 
 import (
+	comm2 "github.com/glide-im/api/internal/api/comm"
 	route "github.com/glide-im/api/internal/api/router"
 	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/dao/wrapper/app"
@@ -29,12 +30,19 @@ func (a *PlatFromApi) Store(ctx *route.Context, request *AppStoreRequest) error 
 	app_id := rand.Int63n(30000000)
 
 	platformStore := app.App{
-		AppID:   app_id,
-		Uid:     ctx.Uid,
-		License: request.License,
-		Logo:    request.Logo,
-		Email:   request.Email,
-		Phone:   request.Phone,
+		AppID: app_id,
+		Uid:   ctx.Uid,
+		//License: request.License,
+		Logo:  request.Logo,
+		Email: request.Email,
+		Name:  request.Name,
+		Phone: request.Phone,
+		Host:  request.Host,
+	}
+
+	appModel := app.AppDao.CheckExistHost(request.Host)
+	if appModel.Uid > 0 {
+		return comm2.NewApiBizError(3001, "域名已被配置")
 	}
 
 	_db := model.Create(platformStore)
@@ -49,10 +57,10 @@ func (a *PlatFromApi) Store(ctx *route.Context, request *AppStoreRequest) error 
 func (a *PlatFromApi) Update(ctx *route.Context, request *AppStoreRequest) error {
 	model := db.DB.Model(&app.App{})
 	platformUpdate := app.App{
-		License: request.License,
-		Logo:    request.Logo,
-		Email:   request.Email,
-		Phone:   request.Phone,
+		//License: request.License,
+		Logo:  request.Logo,
+		Email: request.Email,
+		Phone: request.Phone,
 	}
 	id := ctx.Context.Param("id")
 	model.Where("id = ? and uid = ?", id, ctx.Uid).Updates(platformUpdate)
@@ -72,8 +80,8 @@ func (a *PlatFromApi) Delete(ctx *route.Context) error {
 // 获取联络人
 func (a *PlatFromApi) GetGuestToId(ctx *route.Context) error {
 	model := db.DB.Model(&app.App{})
-	id := ctx.Context.Param("id")
-	model.Where("id = ? and uid = ?", id, ctx.Uid).Delete(&app.App{})
+	appid := ctx.Context.GetHeader("app_id")
+	model.Where("app_id = ?", appid).Delete(&app.App{})
 	ctx.ReturnSuccess(map[string]int64{
 		"uid": 543750,
 	})

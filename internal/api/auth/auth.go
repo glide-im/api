@@ -7,6 +7,7 @@ import (
 	"github.com/glide-im/api/internal/auth"
 	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/dao/userdao"
+	"github.com/glide-im/api/internal/dao/wrapper/app"
 	"github.com/glide-im/api/internal/dao/wrapper/collect"
 	"github.com/glide-im/api/internal/im"
 	"github.com/glide-im/api/internal/pkg/db"
@@ -157,6 +158,12 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 	var err error
 	var isAccount bool
 
+	fmt.Println("ctx.Context.Request.Header", ctx.Context.Request.Header)
+	app_id := app.AppDao.GetAppID(ctx.Context.GetHeader("Host-A"))
+	if app_id == 0 {
+		return comm2.NewApiBizError(4001, "访问异常")
+	}
+
 	u := &userdao.User{
 		Account:  fingerprintId,
 		Password: "",
@@ -186,17 +193,19 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 	}
 
 	collectData := collect.GetUserUa(ctx)
-	collectData.AppID = ctx.AppID
+	collectData.AppID = app_id
 	collectData.Device = "phone"
 	collectData.Origin = req.Origin
+	collectData.Uid = uid
 	db.DB.Model(&collectData).Create(collectData)
 
 	token, err := auth.GenerateTokenExpire(uid, 3, 24*7)
 
-	tk := AuthResponse{
+	tk := GuestAuthResponse{
 		Uid:     uid,
 		Token:   token,
 		Servers: host,
+		AppID:   app_id,
 	}
 	ctx.ReturnSuccess(&tk)
 	return nil

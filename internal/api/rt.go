@@ -83,6 +83,7 @@ func (that *routeInfo) reflectHandleFn() {
 		if that.typeArg1.Elem().Kind() != reflect.Struct {
 			that.panic("the second arg must be struct")
 		}
+		that.typeArg1 = that.typeArg1.Elem()
 	}
 
 	if that.typeOfHandleFn.NumOut() != 1 {
