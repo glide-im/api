@@ -128,6 +128,7 @@ func getContext(ctx *gin.Context) *route.Context {
 		if ok {
 			info.Uid = authInfo.Uid
 			info.Device = authInfo.Device
+			info.AppID = authInfo.AppId
 		} else {
 			logger.E("cast request context auth info (%s) failed, the value is: %v", CtxKeyAuthInfo, a)
 		}

@@ -31,5 +31,7 @@ func guestMiddleware(context *gin.Context) {
 		return
 	}
 	context.Set(CtxGuestKeyAuthInfo, authInfo)
+	// 这里通过检测 设置他的 app_id
+
 	context.Next()
 }

@@ -7,7 +7,9 @@ import (
 	"github.com/glide-im/api/internal/auth"
 	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/dao/userdao"
+	"github.com/glide-im/api/internal/dao/wrapper/collect"
 	"github.com/glide-im/api/internal/im"
+	"github.com/glide-im/api/internal/pkg/db"
 	"github.com/glide-im/glide/pkg/messages"
 	"math/rand"
 	"strconv"
@@ -160,6 +162,7 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 		Password: "",
 		Nickname: fingerprintId,
 		Avatar:   "",
+		Role:     2,
 	}
 
 	isAccount, err = userdao.UserInfoDao.AccountExists(fingerprintId)
@@ -181,6 +184,12 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 		}
 		return comm2.NewDbErr(err)
 	}
+
+	collectData := collect.GetUserUa(ctx)
+	collectData.AppID = ctx.AppID
+	collectData.Device = "phone"
+	collectData.Origin = req.Origin
+	db.DB.Model(&collectData).Create(collectData)
 
 	token, err := auth.GenerateTokenExpire(uid, 3, 24*7)
 

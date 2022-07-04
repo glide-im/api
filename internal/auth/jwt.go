@@ -19,6 +19,7 @@ type AuthInfo struct {
 	Uid    int64 `json:"uid"`
 	Device int64 `json:"device"`
 	Ver    int64 `json:"ver"`
+	AppId  int64 `json:"app_id"`
 }
 
 func genJwt(payload AuthInfo) (string, error) {

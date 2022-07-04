@@ -1,13 +1,14 @@
 package userdao
 
 type User struct {
+	AppID    int64  `json:"app_id,omitempty"`
 	Uid      int64  `gorm:"primaryKey"`
 	Account  string `gorm:"unique"`
 	Nickname string
 	Password string
 	Avatar   string
 	CreateAt int64
-
+	Role     int
 	//CategoryUser []category.CategoryUser `gorm:"foreignKey:Uid;references:Uid"`
 }
 

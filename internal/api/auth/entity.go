@@ -30,6 +30,7 @@ type GuestRegisterRequest struct {
 
 type GuestRegisterV2Request struct {
 	FingerprintId string `json:"fingerprint_id" validate:"required"`
+	Origin        string `json:"origin"`
 }
 
 // AuthResponse login or register result

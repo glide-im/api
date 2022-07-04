@@ -33,6 +33,7 @@ func authMiddleware(context *gin.Context) {
 		return
 	}
 
+	authInfo.AppId = 1001
 	context.Set(CtxKeyAuthInfo, authInfo)
 	context.Next()
 }

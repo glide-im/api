@@ -53,8 +53,8 @@ type Context struct {
 	Action  string
 	R       func(message *messages.GlideMessage)
 	Context *gin.Context
-
-	done bool
+	AppID   int64
+	done    bool
 }
 
 func (i *Context) Response(message *messages.GlideMessage) {

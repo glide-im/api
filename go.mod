@@ -6,9 +6,14 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/glide-im/glide v1.3.1
 	github.com/glide-im/im-service v1.0.2
+	github.com/go-playground/locales v0.13.0
+	github.com/go-playground/universal-translator v0.17.0
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/mozillazg/request v0.8.0
+	github.com/qiniu/api.v7/v7 v7.8.2
+	github.com/spf13/cast v1.4.1
 	github.com/spf13/viper v1.11.0
 	google.golang.org/protobuf v1.28.0
 	gorm.io/driver/mysql v1.3.3
@@ -19,6 +24,8 @@ require (
 	github.com/akutz/memconn v0.1.0 // indirect
 	github.com/apache/thrift v0.16.0 // indirect
 	github.com/armon/go-metrics v0.3.10 // indirect
+	github.com/bitly/go-simplejson v0.5.0 // indirect
+	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/cenk/backoff v2.2.1+incompatible // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
@@ -35,8 +42,6 @@ require (
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ping/ping v0.0.0-20211130115550-779d1e919534 // indirect
-	github.com/go-playground/locales v0.13.0 // indirect
-	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
@@ -84,7 +89,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.0-beta.8 // indirect
 	github.com/philhofer/fwd v1.1.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/qiniu/api.v7/v7 v7.8.2 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rpcxio/libkv v0.5.1-0.20210420120011-1fceaedca8a5 // indirect
 	github.com/rpcxio/rpcx-etcd v0.2.0 // indirect
@@ -95,7 +99,6 @@ require (
 	github.com/smallnest/rpcx v1.7.4 // indirect
 	github.com/soheilhy/cmux v0.1.5 // indirect
 	github.com/spf13/afero v1.8.2 // indirect
-	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
