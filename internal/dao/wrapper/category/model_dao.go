@@ -8,8 +8,9 @@ import (
 )
 
 type Category struct {
+	Id     int64  `json:"id"`
 	AppID  int64  `json:"app_id,omitempty"`
-	Name   string `json:"title"`
+	Name   string `json:"name"`
 	Weight int64  `json:"weight"`
 	Icon   string `json:"icon"`
 }

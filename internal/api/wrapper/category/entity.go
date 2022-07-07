@@ -13,6 +13,17 @@ type CategoryStoreRequest struct {
 	ID     int
 }
 
+type UpdateStruct struct {
+	Name   string `json:"name"`
+	Weight int64  `json:"weight"`
+	Icon   string `json:"icon"`
+	ID     int
+}
+
+type CategoryUpdateRequest struct {
+	Categories []UpdateStruct `json:"categories"`
+}
+
 type CategoryUserRequest struct {
 	CategoryIds []int64 `json:"category_ids" validate:"required"`
 }

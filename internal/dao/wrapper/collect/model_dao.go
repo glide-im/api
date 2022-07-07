@@ -6,6 +6,7 @@ import (
 )
 
 type CollectData struct {
+	Id      int64  `json:"id"`
 	AppID   int64  `json:"app_id,omitempty"`
 	Uid     int64  `json:"uid"`
 	Ip      string `json:"ip"`
@@ -24,7 +25,10 @@ func (a *CollectDataDaoH) GetModel(app_id int64, uid int64) *gorm.DB {
 	return db.DB.Model(&CollectData{}).Where("app_id = ? and uid = ?", app_id, uid)
 }
 
-func (a *CollectDataDaoH) updateOrCreate(CollectData CollectData) *gorm.DB {
-	_collectData := CollectData{}
-	db.DB.Model(&CollectData{}).Where("app_id = ?", CollectData.AppID, uid)
+func (a *CollectDataDaoH) UpdateOrCreate(data CollectData) {
+	fdata := CollectData{}
+	db.DB.Model(CollectData{}).Where("app_id = ? and uid = ?", data.AppID, data.Uid).First(&fdata)
+	if fdata.Uid > 0 {
+		db.DB.Model(CollectData{}).Where("id = ?", fdata.Id).Updates(data)
+	}
 }

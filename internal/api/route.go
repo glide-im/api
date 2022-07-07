@@ -28,7 +28,6 @@ func initRoute() {
 	appGuestApi := auth.AuthApi{}
 
 	routes := group("api",
-		use(crosMiddleware()),
 		group("app",
 			get("release", appApi.GetReleaseInfo),
 		),
@@ -79,6 +78,7 @@ func initRoute() {
 			),
 			group("category",
 				post("store", CategoryApi.Store),
+				post("updates", CategoryApi.Updates),
 				post(":id", CategoryApi.Update),
 				delete_("delete/:id", CategoryApi.Delete),
 				post("order", CategoryApi.Order),

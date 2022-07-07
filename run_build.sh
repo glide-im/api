@@ -5,23 +5,23 @@ if [ ! -n "$1" ]; then
   exit 1
 fi
 
-name='minidoc'
+name='api'
 
 if [ $1 == "mac" ]; then
   rm -f ${name}_mac
-  CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o ${name}_mac main.go
+  CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o ${name}_mac cmd/api/main.go
   echo "编译mac版完成，文件：${name}_mac"
 fi
 
 if [ $1 == "linux" ]; then
   rm -f ${name}_linux
-  CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${name}_linux main.go
+  CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${name}_linux cmd/api/main.go
   echo "编译linux版完成，文件：${name}_linux"
 fi
 
 if [ $1 == "fabu" ]; then
   rm -f ${name}_linux
-  CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${name}_linux main.go
+  CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${name}_linux cmd/api/main.go
   echo "编译linux版完成，文件：${name}_linux"
   git add .
   git commit -am "Update_$(date "+%Y-%m-%d_%H%M%S")"

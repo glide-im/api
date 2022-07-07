@@ -44,7 +44,7 @@ var typeRequestInfo = reflect.TypeOf((*route.Context)(nil))
 func Run(addr string, port int) error {
 
 	g = gin.Default()
-	//rt = g.Use(crosMiddleware())
+	g.Use(crosMiddleware())
 	initRoute()
 	ad := fmt.Sprintf("%s:%d", addr, port)
 	return g.Run(ad)

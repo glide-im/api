@@ -10,7 +10,6 @@ import (
 	"github.com/glide-im/api/internal/dao/wrapper/app"
 	"github.com/glide-im/api/internal/dao/wrapper/collect"
 	"github.com/glide-im/api/internal/im"
-	"github.com/glide-im/api/internal/pkg/db"
 	"github.com/glide-im/glide/pkg/messages"
 	"math/rand"
 	"strconv"
@@ -197,7 +196,7 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 	collectData.Device = "phone"
 	collectData.Origin = req.Origin
 	collectData.Uid = uid
-	db.DB.Model(&collectData).Create(collectData)
+	collect.CollectDataDao.UpdateOrCreate(collectData)
 
 	token, err := auth.GenerateTokenExpire(uid, 3, 24*7)
 

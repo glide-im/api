@@ -1,6 +1,7 @@
 package category
 
 import (
+	"fmt"
 	route "github.com/glide-im/api/internal/api/router"
 	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/dao/wrapper/category"
@@ -35,6 +36,28 @@ func (a *CategoryApi) Store(ctx *route.Context, request *CategoryStoreRequest) e
 		return err
 	}
 	ctx.ReturnSuccess(store)
+	return nil
+}
+
+// 分类更新
+func (a *CategoryApi) Updates(ctx *route.Context, request *CategoryUpdateRequest) error {
+	categories := request.Categories
+	for _, _category := range categories {
+		model := category.CategoryDao.GetModel(1)
+		store := category.Category{
+			AppID:  1,
+			Name:   _category.Name,
+			Weight: _category.Weight,
+			Icon:   _category.Icon,
+		}
+		fmt.Println("store", store)
+		_db := model.Where("id = ?", _category.ID).Updates(store)
+		if err := common.JustError(_db); err != nil {
+			return err
+		}
+	}
+
+	ctx.ReturnSuccess("")
 	return nil
 }
 
