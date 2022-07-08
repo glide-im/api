@@ -81,27 +81,28 @@ func (*AuthApi) SignIn(ctx *route.Context, request *SignInRequest) error {
 	if len(request.Account) == 0 || len(request.Password) == 0 {
 		return ErrSignInAccountInfo
 	}
-	uid, err := userdao.Dao.GetUidInfoByLogin(request.Account, request.Password)
-	if err != nil || uid == 0 {
-		if err == common.ErrNoRecordFound || uid == 0 {
+	user, err := userdao.Dao.GetUidInfoByLogin(request.Account, request.Password)
+	if err != nil || user.Uid == 0 {
+		if err == common.ErrNoRecordFound || user.Uid == 0 {
 			return ErrSignInAccountInfo
 		}
 		return comm2.NewDbErr(err)
 	}
 
-	token, err := auth.GenerateTokenExpire(uid, request.Device, 24*3)
+	token, err := auth.GenerateTokenExpire(user.Uid, request.Device, 24*3)
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
 
 	tk := AuthResponse{
-		Uid:     uid,
-		Token:   token,
-		Servers: host,
+		Uid:      user.Uid,
+		Token:    token,
+		Servers:  host,
+		NickName: user.Nickname,
 	}
 	resp := messages.NewMessage(ctx.Seq, comm2.ActionSuccess, tk)
 
-	ctx.Uid = uid
+	ctx.Uid = user.Uid
 	ctx.Device = request.Device
 	ctx.Response(resp)
 	return nil
@@ -133,20 +134,21 @@ func (*AuthApi) GuestRegister(ctx *route.Context, req *GuestRegisterRequest) err
 		return comm2.NewDbErr(err)
 	}
 
-	uid, err := userdao.Dao.GetUidInfoByLogin(account, "")
-	if err != nil || uid == 0 {
-		if err == common.ErrNoRecordFound || uid == 0 {
+	user, err := userdao.Dao.GetUidInfoByLogin(account, "")
+	if err != nil || user.Uid == 0 {
+		if err == common.ErrNoRecordFound || user.Uid == 0 {
 			return ErrSignInAccountInfo
 		}
 		return comm2.NewDbErr(err)
 	}
 
-	token, err := auth.GenerateTokenExpire(uid, auth.GUEST_DEVICE, 24*7)
+	token, err := auth.GenerateTokenExpire(user.Uid, auth.GUEST_DEVICE, 24*7)
 
 	tk := AuthResponse{
-		Uid:     uid,
-		Token:   token,
-		Servers: host,
+		Uid:      user.Uid,
+		Token:    token,
+		Servers:  host,
+		NickName: user.Nickname,
 	}
 	ctx.ReturnSuccess(&tk)
 	return nil
@@ -183,9 +185,9 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 		}
 	}
 
-	uid, err := userdao.Dao.GetUidInfoByLogin(fingerprintId, "")
-	if err != nil || uid == 0 {
-		if err == common.ErrNoRecordFound || uid == 0 {
+	user, err := userdao.Dao.GetUidInfoByLogin(fingerprintId, "")
+	if err != nil || user.Uid == 0 {
+		if err == common.ErrNoRecordFound || user.Uid == 0 {
 			return ErrSignInAccountInfo
 		}
 		return comm2.NewDbErr(err)
@@ -195,16 +197,17 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 	collectData.AppID = app_id
 	collectData.Device = "phone"
 	collectData.Origin = req.Origin
-	collectData.Uid = uid
+	collectData.Uid = user.Uid
 	collect.CollectDataDao.UpdateOrCreate(collectData)
 
-	token, err := auth.GenerateTokenExpire(uid, 3, 24*7)
+	token, err := auth.GenerateTokenExpire(user.Uid, 3, 24*7)
 
 	tk := GuestAuthResponse{
-		Uid:     uid,
-		Token:   token,
-		Servers: host,
-		AppID:   app_id,
+		Uid:      user.Uid,
+		Token:    token,
+		Servers:  host,
+		AppID:    app_id,
+		NickName: user.Nickname,
 	}
 	ctx.ReturnSuccess(&tk)
 	return nil

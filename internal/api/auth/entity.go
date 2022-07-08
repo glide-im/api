@@ -35,17 +35,19 @@ type GuestRegisterV2Request struct {
 
 // AuthResponse login or register result
 type AuthResponse struct {
-	Token   string
-	Uid     int64
-	Servers []string
+	Token    string
+	Uid      int64
+	Servers  []string
+	NickName string
 }
 
 // GuestAuthResponse login or register result
 type GuestAuthResponse struct {
-	Token   string
-	Uid     int64
-	Servers []string
-	AppID   int64
+	Token    string
+	Uid      int64
+	Servers  []string
+	AppID    int64
+	NickName string
 }
 
 func (request *GuestRegisterV2Request) Validate() error {

@@ -32,7 +32,7 @@ type UserInfoDaoInterface interface {
 	UpdatePassword(uid int64, password string) error
 	GetPassword(uid int64) (string, error)
 
-	GetUidInfoByLogin(account string, password string) (int64, error)
+	GetUidInfoByLogin(account string, password string) (User, error)
 	GetUser(uid int64) (*User, error)
 	GetUserSimpleInfo(uid ...int64) ([]*User, error)
 }

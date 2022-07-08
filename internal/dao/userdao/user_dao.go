@@ -71,19 +71,19 @@ func (d *UserInfoDaoImpl) UpdatePassword(uid int64, password string) error {
 	return d.update(uid, "password", password)
 }
 
-func (d *UserInfoDaoImpl) GetUidInfoByLogin(account string, password string) (int64, error) {
-	var uid int64
+func (d *UserInfoDaoImpl) GetUidInfoByLogin(account string, password string) (User, error) {
+	var user User
 	query := db.DB.Model(&User{}).
 		Where("account = ? AND password = ?", account, password).
-		Select("uid").
-		Find(&uid)
+		Select("uid, nickname").
+		Find(&user)
 	if query.Error != nil {
-		return 0, query.Error
+		return user, query.Error
 	}
 	if query.RowsAffected == 0 {
-		return 0, common.ErrNoRecordFound
+		return user, common.ErrNoRecordFound
 	}
-	return uid, nil
+	return user, nil
 }
 
 func (d *UserInfoDaoImpl) GetPassword(uid int64) (string, error) {
