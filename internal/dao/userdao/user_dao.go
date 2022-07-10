@@ -3,6 +3,8 @@ package userdao
 import (
 	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/dao/uid"
+	"github.com/glide-im/api/internal/dao/wrapper/category"
+	"github.com/glide-im/api/internal/dao/wrapper/collect"
 	"github.com/glide-im/api/internal/pkg/db"
 	"time"
 )
@@ -116,6 +118,29 @@ func (d *UserInfoDaoImpl) GetUserSimpleInfo(uid ...int64) ([]*User, error) {
 func (d *UserInfoDaoImpl) update(uid int64, field string, value interface{}) error {
 	query := db.DB.Model(&User{}).Where("uid = ?", uid).Update(field, value)
 	return common.ResolveError(query)
+}
+
+func (d *UserInfoDaoImpl) GetUserCategory(uids []int64, app_id int64) ([]int64, error) {
+	var categoryUsers []category.CategoryUser
+	query := db.DB.Model(category.CategoryUser{}).Where("app_id = ?", app_id).Where("uid in ?", uids).Select("uid, category_id").Find(&categoryUsers)
+	if err := common.JustError(query); err != nil {
+		return nil, err
+	}
+	var category_ids []int64
+	for _, cate := range categoryUsers {
+		category_ids = append(category_ids, cate.CategoryId)
+	}
+	return category_ids, nil
+}
+
+func (d *UserInfoDaoImpl) GetCollectData(uid int64, app_id int64) (collect.CollectData, error) {
+	var collectData collect.CollectData
+	query := db.DB.Model(collect.CollectData{}).Where("app_id = ?", app_id).Where("uid = ?", uid).Find(&collectData)
+	if err := common.JustError(query); err != nil {
+		return collectData, err
+	}
+
+	return collectData, nil
 }
 
 func (d *UserInfoDaoImpl) UpdateProfile(uid int64, profile UpdateProfile) error {

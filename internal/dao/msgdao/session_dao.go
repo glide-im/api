@@ -1,6 +1,7 @@
 package msgdao
 
 import (
+	"fmt"
 	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/pkg/db"
 	"github.com/glide-im/glide/pkg/logger"
@@ -93,6 +94,7 @@ func (s *sessionDaoImpl) GetMessagesByMids(mids []int64) (error, map[int64]ChatM
 
 func (s *sessionDaoImpl) GetSession(uid int64, uid2 int64) (*Session, error) {
 	sid, lg, sm := getSessionId(uid, uid2)
+	fmt.Println("keySession + sid", keySession+sid)
 	result, err := db.Redis.HGetAll(keySession + sid).Result()
 	if err != nil {
 		return nil, err

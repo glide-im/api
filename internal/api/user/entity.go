@@ -1,14 +1,18 @@
 package user
 
+import "github.com/glide-im/api/internal/dao/wrapper/collect"
+
 type InfoRequest struct {
 	Uid []int64
 }
 
 type InfoResponse struct {
-	Uid      int64
-	Nickname string
-	Account  string
-	Avatar   string
+	Uid         int64
+	Nickname    string
+	Account     string
+	Avatar      string
+	CategoryIds []int64
+	Collect     collect.CollectData
 }
 
 type InfoListResponse struct {

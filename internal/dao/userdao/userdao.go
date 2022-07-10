@@ -1,6 +1,9 @@
 package userdao
 
-import "time"
+import (
+	"github.com/glide-im/api/internal/dao/wrapper/collect"
+	"time"
+)
 
 var Dao = UserDao{
 	Cache:                UserCacheDao{},
@@ -35,6 +38,8 @@ type UserInfoDaoInterface interface {
 	GetUidInfoByLogin(account string, password string) (User, error)
 	GetUser(uid int64) (*User, error)
 	GetUserSimpleInfo(uid ...int64) ([]*User, error)
+	GetUserCategory(uid []int64, app_od int64) ([]int64, error)
+	GetCollectData(uid int64, app_id int64) (collect.CollectData, error)
 }
 
 type ContactsDaoInterface interface {

@@ -41,13 +41,14 @@ type SessionRequest struct {
 }
 
 type SessionResponse struct {
-	Uid1     int64
-	Uid2     int64
-	To       int64
-	Unread   int64
-	LastMid  int64
-	UpdateAt int64
-	CreateAt int64
+	Uid1        int64
+	Uid2        int64
+	To          int64
+	Unread      int64
+	LastMid     int64
+	UpdateAt    int64
+	CreateAt    int64
+	CategoryIds []int64
 }
 
 type RecentChatMessageRequest struct {

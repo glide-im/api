@@ -3,7 +3,6 @@ package category
 import (
 	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/pkg/db"
-	"github.com/spf13/cast"
 	"gorm.io/gorm"
 )
 
@@ -25,9 +24,10 @@ func (a *CategoryH) GetModel(app_id int64) *gorm.DB {
 }
 
 type CategoryUser struct {
-	AppID      int64  `json:"app_id,omitempty"`
-	CategoryId int64  `json:"category_id"`
-	UId        string `json:"uid"`
+	AppID      int64 `json:"app_id,omitempty"`
+	CategoryId int64 `json:"category_id"`
+	UId        int64 `json:"uid"`
+	Form       int64 `json:"from"`
 }
 
 var CategoryUserDao = &CategoryUserH{}
@@ -39,11 +39,10 @@ func (s *CategoryUserH) GetModel(app_id int64) *gorm.DB {
 	return db.DB.Model(&CategoryUser{}).Where("app_id = ?", app_id)
 }
 
-func (s *CategoryUserH) Updates(uid int64, category_ids []int64) error {
+func (s *CategoryUserH) Updates(uid int64, category_ids []int64, selfId int64) error {
 	var _db = db.DB
 	err := db.DB.Transaction(func(tx *gorm.DB) error {
-		_uid := cast.ToString(uid)
-		_db = s.GetModel(1).Where("uid = ?", _uid).Delete(&Category{})
+		_db = s.GetModel(1).Where("uid = ?", uid).Delete(&Category{})
 		if err := common.JustError(_db); err != nil {
 			return err
 		}
@@ -53,7 +52,8 @@ func (s *CategoryUserH) Updates(uid int64, category_ids []int64) error {
 			categories = append(categories, CategoryUser{
 				AppID:      1,
 				CategoryId: category_id,
-				UId:        _uid,
+				UId:        uid,
+				Form:       selfId,
 			})
 		}
 		_db = db.DB.CreateInBatches(categories, 100)

@@ -5,7 +5,9 @@ import (
 	route "github.com/glide-im/api/internal/api/router"
 	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/dao/wrapper/category"
+	"github.com/glide-im/api/internal/pkg/db"
 	"github.com/spf13/cast"
+	"gorm.io/gorm"
 )
 
 type CategoryApi struct {
@@ -43,15 +45,21 @@ func (a *CategoryApi) Store(ctx *route.Context, request *CategoryStoreRequest) e
 func (a *CategoryApi) Updates(ctx *route.Context, request *CategoryUpdateRequest) error {
 	categories := request.Categories
 	for _, _category := range categories {
-		model := category.CategoryDao.GetModel(1)
+		model := category.CategoryDao.GetModel(ctx.AppID)
 		store := category.Category{
 			AppID:  1,
 			Name:   _category.Name,
 			Weight: _category.Weight,
 			Icon:   _category.Icon,
 		}
-		fmt.Println("store", store)
-		_db := model.Where("id = ?", _category.ID).Updates(store)
+		var _db *gorm.DB
+		if _category.ID == 0 {
+			fmt.Println(store)
+			_db = db.DB.Model(&category.Category{}).Create(&store)
+		} else {
+			_db = model.Where("id = ?", _category.ID).Updates(store)
+		}
+
 		if err := common.JustError(_db); err != nil {
 			return err
 		}
@@ -100,7 +108,7 @@ func (a *CategoryApi) Order(ctx *route.Context, request *CategoryOrderRequest) e
 func (a *CategoryApi) SetUserCategory(ctx *route.Context, request *CategoryUserRequest) error {
 	categoryIds := request.CategoryIds
 	uid := ctx.Context.Param("uid")
-	err := category.CategoryUserDao.Updates(cast.ToInt64(uid), categoryIds)
+	err := category.CategoryUserDao.Updates(cast.ToInt64(uid), categoryIds, ctx.Uid)
 	if err != nil {
 		return err
 	}

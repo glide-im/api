@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"fmt"
 	comm2 "github.com/glide-im/api/internal/api/comm"
 	"github.com/glide-im/api/internal/api/router"
 	"github.com/glide-im/api/internal/dao/userdao"
@@ -35,17 +36,22 @@ func (a *UserApi) GetUserInfo(ctx *route.Context, request *InfoRequest) error {
 	resp := []InfoResponse{}
 	for _, u := range request.Uid {
 		si, err := userdao.UserInfoDao.GetUserSimpleInfo(u)
+		cateIds, err := userdao.UserInfoDao.GetUserCategory([]int64{u}, ctx.AppID)
+		collect, err := userdao.UserInfoDao.GetCollectData(u, ctx.AppID)
 		if err != nil {
 			continue
 		}
 		for _, i := range si {
 			resp = append(resp, InfoResponse{
-				Uid:      i.Uid,
-				Nickname: i.Nickname,
-				Account:  i.Account,
-				Avatar:   i.Avatar,
+				Uid:         i.Uid,
+				Nickname:    i.Nickname,
+				Account:     i.Account,
+				Avatar:      i.Avatar,
+				CategoryIds: cateIds,
+				Collect:     collect,
 			})
 		}
+		fmt.Println(resp)
 	}
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, resp))
 	return nil
