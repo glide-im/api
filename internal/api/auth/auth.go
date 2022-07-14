@@ -9,6 +9,7 @@ import (
 	"github.com/glide-im/api/internal/dao/userdao"
 	"github.com/glide-im/api/internal/dao/wrapper/app"
 	"github.com/glide-im/api/internal/dao/wrapper/collect"
+	"github.com/glide-im/api/internal/dao/wrapper/tm"
 	"github.com/glide-im/api/internal/im"
 	"github.com/glide-im/glide/pkg/messages"
 	"math/rand"
@@ -246,6 +247,15 @@ func (a *AuthApi) Logout(ctx *route.Context) error {
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, ""))
 	_ = im.IM.Logout(strconv.FormatInt(ctx.Uid, 10), strconv.FormatInt(ctx.Device, 10))
 	return nil
+}
+
+func (a *AuthApi) VerifyCode(ctx *route.Context) error {
+	err := tm.VerifyCodeU.SendVerifyCode("chenf@surest.cn", "resources/auth/login.html")
+	if err != nil {
+		return err
+	}
+	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, ""))
+	return err
 }
 
 func randomStr(n int) string {

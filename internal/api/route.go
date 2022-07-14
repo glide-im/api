@@ -36,6 +36,7 @@ func initRoute() {
 			post("guest", authApi.GuestRegister),
 			post("signin", authApi.SignIn),
 			post("token", authApi.AuthToken),
+			post("verifyCode", authApi.VerifyCode),
 			post("logout", authApi.Logout),
 			group("guest",
 				post("/register", appGuestApi.GuestRegisterV2),

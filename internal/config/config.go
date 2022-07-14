@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
 )
 
@@ -91,6 +90,5 @@ func Load() error {
 	IMRpcServer = c.IMRpcService
 	Qiniu = c.Qiniu
 
-	fmt.Println("QiniuConfig", Qiniu)
 	return err
 }
