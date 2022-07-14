@@ -18,14 +18,20 @@ type LogoutRequest struct {
 }
 
 type RegisterRequest struct {
-	Account  string
-	Nickname string
-	Password string
+	Account  string `json:"account"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,max=16,min=6"`
+	Captcha  string `json:"captcha" validate:"required"`
+	Nickname string `json:"nickname" validate:"required"`
 }
 
 type GuestRegisterRequest struct {
 	Avatar   string
 	Nickname string
+}
+
+type VerifyCodeRequest struct {
+	Email string `json:"email" validate:"required,email"`
 }
 
 type GuestRegisterV2Request struct {
@@ -51,5 +57,9 @@ type GuestAuthResponse struct {
 }
 
 func (request *GuestRegisterV2Request) Validate() error {
+	return validate.ValidateHandle(request)
+}
+
+func (request *RegisterRequest) Validate() error {
 	return validate.ValidateHandle(request)
 }

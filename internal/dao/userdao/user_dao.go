@@ -43,9 +43,9 @@ func (d *UserInfoDaoImpl) DelUser(uid int64) error {
 	return common.ResolveError(query)
 }
 
-func (d *UserInfoDaoImpl) AccountExists(account string) (bool, error) {
+func (d *UserInfoDaoImpl) AccountExists(email string) (bool, error) {
 	var count int64
-	query := db.DB.Model(&User{}).Where("account = ?", account).Count(&count)
+	query := db.DB.Model(&User{}).Where("email = ?", email).Count(&count)
 	if err := common.ResolveError(query); err != nil {
 		return false, err
 	}

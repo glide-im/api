@@ -41,7 +41,7 @@ func TestAuthApi_AuthToken(t *testing.T) {
 
 func TestAuthApi_Register(t *testing.T) {
 	err := authApi.Register(getContext(2, 0), &RegisterRequest{
-		Account:  "bb",
+		Email:    "bb",
 		Password: "bb",
 	})
 	logErr(t, err)

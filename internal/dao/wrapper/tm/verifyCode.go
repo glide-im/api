@@ -63,9 +63,11 @@ func (c *VerifyCode) SendVerifyCode(value string, tm string) (err error) {
 
 func (c *VerifyCode) ValidateVerifyCode(value string, code string) error {
 	rs, err := db.Redis.HGet(c.getKey(value), code).Result()
+	//rs, err := db.Redis.HGetAll(c.getKey(value), code).Result()
 	if err != nil {
 		return VerifyCodeError
 	}
+	fmt.Println(len(rs))
 	if len(rs) == 0 {
 		return VerifyCodeError
 	}

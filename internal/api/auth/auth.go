@@ -216,18 +216,23 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 
 func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 
-	exists, err := userdao.UserInfoDao.AccountExists(req.Account)
+	exists, err := userdao.UserInfoDao.AccountExists(req.Email)
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
 	if exists {
 		return comm2.NewApiBizError(1004, "account already exists")
 	}
+	err = tm.VerifyCodeU.ValidateVerifyCode(req.Email, req.Captcha)
+	if err != nil {
+		return err
+	}
 
 	//rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
 	u := &userdao.User{
-		Account:  req.Account,
+		Account:  req.Email,
 		Password: req.Password,
+		Email:    req.Email,
 		Nickname: req.Nickname,
 		//Avatar:   nil,
 	}
@@ -235,6 +240,8 @@ func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
+
+	tm.VerifyCodeU.ClearLimit(req.Email)
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, ""))
 	return err
 }
@@ -249,8 +256,8 @@ func (a *AuthApi) Logout(ctx *route.Context) error {
 	return nil
 }
 
-func (a *AuthApi) VerifyCode(ctx *route.Context) error {
-	err := tm.VerifyCodeU.SendVerifyCode("chenf@surest.cn", "resources/auth/login.html")
+func (a *AuthApi) VerifyCode(ctx *route.Context, req *VerifyCodeRequest) error {
+	err := tm.VerifyCodeU.SendVerifyCode(req.Email, "resources/auth/login.html")
 	if err != nil {
 		return err
 	}
