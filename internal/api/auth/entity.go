@@ -10,8 +10,8 @@ type AuthTokenRequest struct {
 
 type SignInRequest struct {
 	Device   int64
-	Account  string
-	Password string
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
 }
 
 type LogoutRequest struct {
@@ -23,6 +23,11 @@ type RegisterRequest struct {
 	Password string `json:"password" validate:"required,max=16,min=6"`
 	Captcha  string `json:"captcha" validate:"required"`
 	Nickname string `json:"nickname" validate:"required"`
+}
+
+type ForgetRequest struct {
+	Email   string `json:"email" validate:"required,email"`
+	Captcha string `json:"captcha" validate:"required"`
 }
 
 type GuestRegisterRequest struct {

@@ -11,6 +11,7 @@ import (
 	"github.com/glide-im/api/internal/dao/wrapper/collect"
 	"github.com/glide-im/api/internal/dao/wrapper/tm"
 	"github.com/glide-im/api/internal/im"
+	"github.com/glide-im/api/internal/pkg/db"
 	"github.com/glide-im/glide/pkg/messages"
 	"math/rand"
 	"strconv"
@@ -79,10 +80,7 @@ func (*AuthApi) AuthToken(ctx *route.Context, req *AuthTokenRequest) error {
 }
 
 func (*AuthApi) SignIn(ctx *route.Context, request *SignInRequest) error {
-	if len(request.Account) == 0 || len(request.Password) == 0 {
-		return ErrSignInAccountInfo
-	}
-	user, err := userdao.Dao.GetUidInfoByLogin(request.Account, request.Password)
+	user, err := userdao.Dao.GetUidInfoByLogin(request.Email, request.Password)
 	if err != nil || user.Uid == 0 {
 		if err == common.ErrNoRecordFound || user.Uid == 0 {
 			return ErrSignInAccountInfo
@@ -237,6 +235,32 @@ func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 		//Avatar:   nil,
 	}
 	err = userdao.UserInfoDao.AddUser(u)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+
+	tm.VerifyCodeU.ClearLimit(req.Email)
+	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, ""))
+	return err
+}
+
+func (*AuthApi) Forget(ctx *route.Context, req *RegisterRequest) error {
+
+	exists, err := userdao.UserInfoDao.AccountExists(req.Email)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+	if !exists {
+		return comm2.NewApiBizError(1004, "账户不存在")
+	}
+
+	err = tm.VerifyCodeU.ValidateVerifyCode(req.Email, req.Captcha)
+	if err != nil {
+		return err
+	}
+	var user userdao.User
+	db.DB.Model(&userdao.User{}).Where("email = ?", req.Email).Find(&user)
+	err = userdao.UserInfoDao.UpdatePassword(user.Uid, req.Password)
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}

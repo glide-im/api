@@ -76,8 +76,8 @@ func (d *UserInfoDaoImpl) UpdatePassword(uid int64, password string) error {
 func (d *UserInfoDaoImpl) GetUidInfoByLogin(account string, password string) (User, error) {
 	var user User
 	query := db.DB.Model(&User{}).
-		Where("account = ? AND password = ?", account, password).
-		Select("uid, nickname").
+		Where("email = ? AND password = ?", account, password).
+		Select("uid, nickname, email").
 		Find(&user)
 	if query.Error != nil {
 		return user, query.Error

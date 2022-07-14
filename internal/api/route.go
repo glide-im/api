@@ -33,6 +33,7 @@ func initRoute() {
 		),
 		group("auth",
 			post("register", authApi.Register),
+			post("forget", authApi.Forget),
 			post("guest", authApi.GuestRegister),
 			post("signin", authApi.SignIn),
 			post("token", authApi.AuthToken),
