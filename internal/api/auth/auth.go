@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"fmt"
 	comm2 "github.com/glide-im/api/internal/api/comm"
 	"github.com/glide-im/api/internal/api/router"
@@ -49,8 +50,8 @@ type Interface interface {
 }
 
 var (
-	ErrInvalidToken      = comm2.NewApiBizError(1001, "token is invalid, plz sign in")
-	ErrSignInAccountInfo = comm2.NewApiBizError(1002, "check your account and password")
+	ErrInvalidToken      = comm2.NewApiBizError(1001, "token 已失效，请重新登录")
+	ErrSignInAccountInfo = comm2.NewApiBizError(1002, "密码错误")
 	ErrReplicatedLogin   = comm2.NewApiBizError(1003, "replicated login")
 )
 
@@ -98,7 +99,11 @@ func (*AuthApi) SignIn(ctx *route.Context, request *SignInRequest) error {
 		Token:    token,
 		Servers:  host,
 		NickName: user.Nickname,
+		Email:    user.Email,
+		Phone:    user.Phone,
 	}
+	appProfile := app.AppDao.GetAppProfile(user.Uid)
+	tk.App = appProfile
 	resp := messages.NewMessage(ctx.Seq, comm2.ActionSuccess, tk)
 
 	ctx.Uid = user.Uid
@@ -158,13 +163,13 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 	var err error
 	var isAccount bool
 
-	fmt.Println("ctx.Context.Request.Header", ctx.Context.Request.Header)
 	app_id := app.AppDao.GetAppID(ctx.Context.GetHeader("Host-A"))
 	if app_id == 0 {
 		return comm2.NewApiBizError(4001, "访问异常")
 	}
 
 	u := &userdao.User{
+		AppID:    app_id,
 		Account:  fingerprintId,
 		Password: "",
 		Nickname: fingerprintId,
@@ -172,9 +177,10 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 		Role:     2,
 	}
 
-	isAccount, err = userdao.UserInfoDao.AccountExists(fingerprintId)
-	if err != nil {
-		return comm2.NewDbErr(err)
+	var user userdao.User
+	db.DB.Model(&userdao.User{}).Where("account = ?", fingerprintId).Find(&user)
+	if user.Uid == 0 {
+		isAccount = false
 	}
 
 	if !isAccount {
@@ -184,19 +190,12 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 		}
 	}
 
-	user, err := userdao.Dao.GetUidInfoByLogin(fingerprintId, "")
-	if err != nil || user.Uid == 0 {
-		if err == common.ErrNoRecordFound || user.Uid == 0 {
-			return ErrSignInAccountInfo
-		}
-		return comm2.NewDbErr(err)
-	}
-
 	collectData := collect.GetUserUa(ctx)
 	collectData.AppID = app_id
 	collectData.Device = "phone"
 	collectData.Origin = req.Origin
 	collectData.Uid = user.Uid
+	collectData.Region = collect.GetIpAddr(collectData.Ip)
 	collect.CollectDataDao.UpdateOrCreate(collectData)
 
 	token, err := auth.GenerateTokenExpire(user.Uid, 3, 24*7)
@@ -235,6 +234,19 @@ func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 		//Avatar:   nil,
 	}
 	err = userdao.UserInfoDao.AddUser(u)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+	appU := &app.App{
+		Name:   req.Email,
+		Uid:    u.Uid,
+		Status: 0,
+		Logo:   "",
+		Email:  req.Email,
+		Phone:  "",
+		Host:   "",
+	}
+	err = app.AppDao.AddApp(appU)
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
@@ -281,6 +293,18 @@ func (a *AuthApi) Logout(ctx *route.Context) error {
 }
 
 func (a *AuthApi) VerifyCode(ctx *route.Context, req *VerifyCodeRequest) error {
+	if req.Mode == "register" {
+		exists, _ := userdao.UserInfoDao.AccountExists(req.Email)
+		if exists {
+			return errors.New("用户已存在，快去登录吧")
+		}
+	}
+	if req.Mode == "login" || req.Mode == "forget" {
+		exists, _ := userdao.UserInfoDao.AccountExists(req.Email)
+		if !exists {
+			return errors.New("用户不存在, 请先注册吧")
+		}
+	}
 	err := tm.VerifyCodeU.SendVerifyCode(req.Email, "resources/auth/login.html")
 	if err != nil {
 		return err

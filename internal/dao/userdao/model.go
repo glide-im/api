@@ -4,7 +4,8 @@ type User struct {
 	AppID    int64  `json:"app_id,omitempty"`
 	Uid      int64  `gorm:"primaryKey"`
 	Account  string `gorm:"unique"`
-	Email    string `gorm:"unique"`
+	Email    string `json:"email" gorm:"unique"`
+	Phone    string `json:"phone" gorm:"unique"`
 	Nickname string
 	Password string
 	Avatar   string

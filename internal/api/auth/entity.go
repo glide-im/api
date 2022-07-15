@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"github.com/glide-im/api/internal/dao/wrapper/app"
 	"github.com/glide-im/api/internal/pkg/validate"
 )
 
@@ -37,6 +38,7 @@ type GuestRegisterRequest struct {
 
 type VerifyCodeRequest struct {
 	Email string `json:"email" validate:"required,email"`
+	Mode  string `json:"mode"`
 }
 
 type GuestRegisterV2Request struct {
@@ -50,6 +52,9 @@ type AuthResponse struct {
 	Uid      int64
 	Servers  []string
 	NickName string
+	App      app.App
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
 }
 
 // GuestAuthResponse login or register result

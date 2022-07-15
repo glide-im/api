@@ -23,7 +23,8 @@ func GetIpAddr(ip string) string {
 		return ""
 	}
 
-	location, err := j.Get("data.location").String()
+	location, err := j.Get("data").Get("country").String()
+
 	if err != nil {
 		return ""
 	}

@@ -25,6 +25,11 @@ type UpdateProfileRequest struct {
 	Avatar   string `validate:"required,url"`
 }
 
+type UpdateEmailRequest struct {
+	Email   string `json:"email" validate:"required|email"`
+	Captcha string `json:"captcha" validate:"required"`
+}
+
 type ContactResponse struct {
 	Id     int64
 	Type   int8

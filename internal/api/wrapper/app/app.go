@@ -27,7 +27,7 @@ func (a *PlatFromApi) List(ctx *route.Context) error {
 func (a *PlatFromApi) Store(ctx *route.Context, request *AppStoreRequest) error {
 	model := db.DB.Model(&app.App{})
 	rand.Seed(time.Now().UnixNano())
-	app_id := rand.Int63n(30000000)
+	app_id := app.GenerateAppId()
 
 	platformStore := app.App{
 		AppID: app_id,
@@ -60,6 +60,7 @@ func (a *PlatFromApi) Update(ctx *route.Context, request *AppStoreRequest) error
 		//License: request.License,
 		Logo:  request.Logo,
 		Email: request.Email,
+		Name:  request.Name,
 		Phone: request.Phone,
 	}
 	id := ctx.Context.Param("id")
@@ -83,7 +84,7 @@ func (a *PlatFromApi) GetGuestToId(ctx *route.Context) error {
 	appid := ctx.Context.GetHeader("app_id")
 	model.Where("app_id = ?", appid).Delete(&app.App{})
 	ctx.ReturnSuccess(map[string]int64{
-		"uid": 543750,
+		"uid": 543813,
 	})
 	return nil
 }

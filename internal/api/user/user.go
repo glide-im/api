@@ -6,6 +6,7 @@ import (
 	comm2 "github.com/glide-im/api/internal/api/comm"
 	"github.com/glide-im/api/internal/api/router"
 	"github.com/glide-im/api/internal/dao/userdao"
+	"github.com/glide-im/api/internal/dao/wrapper/tm"
 	"github.com/glide-im/glide/pkg/messages"
 )
 
@@ -24,6 +25,36 @@ func (a *UserApi) UpdateUserProfile(ctx *route.Context, request *UpdateProfileRe
 		Avatar:   request.Password,
 	}
 	err := userdao.UserInfoDao.UpdateProfile(ctx.Uid, user)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, ""))
+	return nil
+}
+
+func (a *UserApi) UpdateUserEmail(ctx *route.Context, request *UpdateEmailRequest) error {
+	err := tm.VerifyCodeU.ValidateVerifyCode(request.Email, request.Captcha)
+	if err != nil {
+		return err
+	}
+
+	// 账户是否存在
+	exist, err := userdao.UserInfoDao.AccountExists(request.Email, ctx.Uid)
+	if err != nil {
+		return err
+	}
+	fmt.Println("exist", exist)
+
+	// 账户是否存在
+	if exist {
+		return errors.New("邮箱已被占用")
+	}
+
+	// TODO 2021-11-29 更新我的信息
+	user := userdao.UpdateProfile{
+		Email: request.Email,
+	}
+	err = userdao.UserInfoDao.UpdateProfile(ctx.Uid, user)
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}

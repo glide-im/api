@@ -1,12 +1,14 @@
 package app
 
 import (
+	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/pkg/db"
 	"gorm.io/gorm"
 )
 
 type App struct {
-	AppID int64  `json:"app_id,omitempty"`
+	Id    int64  `json:"id"`
+	AppID string `json:"app_id,omitempty"`
 	Name  string `json:"name"`
 	Uid   int64  `json:"uid"`
 	//License string `json:"license,omitempty"`
@@ -33,6 +35,20 @@ func (a *AppH) CheckExistHost(host string) *App {
 	return appModel
 }
 
+func (a *AppH) AddApp(appModel *App) error {
+	app_id := GenerateAppId()
+	appModel.AppID = app_id
+	query := db.DB.Model(&App{}).Create(&appModel)
+
+	return common.JustError(query)
+}
+
+func (a *AppH) GetAppProfile(uid int64) App {
+	app := App{}
+	db.DB.Model(&App{}).Where("uid = ?", uid).Find(&app)
+	return app
+}
+
 // 检查域名是否存在
 func (a *AppH) GetAppID(host string) int64 {
 	if len(host) == 0 {
@@ -42,5 +58,5 @@ func (a *AppH) GetAppID(host string) int64 {
 	appModel := &App{}
 	db.DB.Model(&App{}).Where("host = ?", host).First(&appModel)
 
-	return appModel.AppID
+	return appModel.Id
 }

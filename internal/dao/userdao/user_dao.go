@@ -27,7 +27,7 @@ type UserInfoDaoImpl struct{}
 func (d *UserInfoDaoImpl) AddUser(u *User) error {
 	u.Uid = 0
 	u.CreateAt = time.Now().Unix()
-	query := db.DB.Create(u)
+	query := db.DB.Create(&u)
 	return common.ResolveError(query)
 }
 
@@ -43,9 +43,13 @@ func (d *UserInfoDaoImpl) DelUser(uid int64) error {
 	return common.ResolveError(query)
 }
 
-func (d *UserInfoDaoImpl) AccountExists(email string) (bool, error) {
+func (d *UserInfoDaoImpl) AccountExists(email string, excludeIds ...int64) (bool, error) {
 	var count int64
-	query := db.DB.Model(&User{}).Where("email = ?", email).Count(&count)
+	query := db.DB.Model(&User{})
+	if len(excludeIds) > 0 {
+		query.Where("uid not in (?)", excludeIds)
+	}
+	query.Where("email = ?", email).Count(&count)
 	if err := common.ResolveError(query); err != nil {
 		return false, err
 	}
@@ -148,6 +152,7 @@ func (d *UserInfoDaoImpl) UpdateProfile(uid int64, profile UpdateProfile) error 
 		Account:  profile.Avatar,
 		Nickname: profile.Nickname,
 		Password: profile.Password,
+		Email:    profile.Email,
 	})
-	return common.ResolveError(query)
+	return common.JustError(query)
 }

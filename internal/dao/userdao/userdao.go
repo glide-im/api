@@ -28,7 +28,7 @@ type UserInfoDaoInterface interface {
 	AddUser(u *User) error
 	DelUser(uid int64) error
 	HasUser(uid int64) (bool, error)
-	AccountExists(account string) (bool, error)
+	AccountExists(account string, excludeIds ...int64) (bool, error)
 
 	UpdateNickname(uid int64, nickname string) error
 	UpdateAvatar(uid int64, avatar string) error

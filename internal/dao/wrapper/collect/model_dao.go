@@ -30,5 +30,7 @@ func (a *CollectDataDaoH) UpdateOrCreate(data CollectData) {
 	db.DB.Model(CollectData{}).Where("app_id = ? and uid = ?", data.AppID, data.Uid).First(&fdata)
 	if fdata.Uid > 0 {
 		db.DB.Model(CollectData{}).Where("id = ?", fdata.Id).Updates(data)
+	} else {
+		db.DB.Model(CollectData{}).Create(&data)
 	}
 }
