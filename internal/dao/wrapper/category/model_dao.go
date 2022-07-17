@@ -67,3 +67,26 @@ func (s *CategoryUserH) Updates(uid int64, category_ids []int64, selfId int64) e
 	}
 	return nil
 }
+
+func (s *CategoryUserH) InitCategory(app_id int64) {
+	categories := []Category{}
+	categories = append(categories, Category{
+		AppID:  app_id,
+		Name:   "Vip",
+		Weight: 2,
+		Icon:   "vip",
+	})
+	categories = append(categories, Category{
+		AppID:  app_id,
+		Name:   "待沟通客户",
+		Weight: 1,
+		Icon:   "pote",
+	})
+	categories = append(categories, Category{
+		AppID:  app_id,
+		Name:   "潜在客户",
+		Weight: 0,
+		Icon:   "user",
+	})
+	db.DB.Model(&Category{}).Create(&categories)
+}

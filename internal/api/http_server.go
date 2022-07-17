@@ -133,6 +133,7 @@ func getContext(ctx *gin.Context) *route.Context {
 			logger.E("cast request context auth info (%s) failed, the value is: %v", CtxKeyAuthInfo, a)
 		}
 	}
+
 	return info
 }
 

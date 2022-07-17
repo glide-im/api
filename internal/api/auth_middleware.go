@@ -1,8 +1,10 @@
 package api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/glide-im/api/internal/auth"
+	"github.com/glide-im/api/internal/dao/userdao"
 	"net/http"
 	"strings"
 )
@@ -33,7 +35,8 @@ func authMiddleware(context *gin.Context) {
 		return
 	}
 
-	authInfo.AppId = 1
+	authInfo.AppId = userdao.UserInfoDao.GetUserAppId(authInfo.Uid)
 	context.Set(CtxKeyAuthInfo, authInfo)
+	fmt.Println("(authInfo.Uid", authInfo.Uid)
 	context.Next()
 }

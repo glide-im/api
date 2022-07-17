@@ -127,3 +127,23 @@ func (a *UserApi) UserProfile(ctx *route.Context) error {
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, resp[0]))
 	return nil
 }
+
+func (a *UserApi) UserAuthProfile(ctx *route.Context) error {
+	info, err := userdao.UserInfoDao.GetUserSimpleInfo(ctx.Uid)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+	user := info[0]
+	profile := userdao.User{
+		AppID:    ctx.AppID,
+		Uid:      ctx.Uid,
+		Account:  user.Account,
+		Email:    user.Email,
+		Phone:    user.Phone,
+		Nickname: user.Nickname,
+		Avatar:   user.Avatar,
+		Role:     user.Role,
+	}
+	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, profile))
+	return nil
+}

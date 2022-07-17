@@ -9,6 +9,7 @@ import (
 	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/dao/userdao"
 	"github.com/glide-im/api/internal/dao/wrapper/app"
+	"github.com/glide-im/api/internal/dao/wrapper/category"
 	"github.com/glide-im/api/internal/dao/wrapper/collect"
 	"github.com/glide-im/api/internal/dao/wrapper/tm"
 	"github.com/glide-im/api/internal/im"
@@ -161,7 +162,7 @@ func (*AuthApi) GuestRegister(ctx *route.Context, req *GuestRegisterRequest) err
 func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request) error {
 	fingerprintId := req.FingerprintId
 	var err error
-	var isAccount bool
+	isAccount := true
 
 	app_id := app.AppDao.GetAppID(ctx.Context.GetHeader("Host-A"))
 	if app_id == 0 {
@@ -179,6 +180,7 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 
 	var user userdao.User
 	db.DB.Model(&userdao.User{}).Where("account = ?", fingerprintId).Find(&user)
+	fmt.Println("useruseruser", user)
 	if user.Uid == 0 {
 		isAccount = false
 	}
@@ -218,7 +220,7 @@ func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 		return comm2.NewDbErr(err)
 	}
 	if exists {
-		return comm2.NewApiBizError(1004, "account already exists")
+		return comm2.NewApiBizError(1004, "帐户已存在")
 	}
 	err = tm.VerifyCodeU.ValidateVerifyCode(req.Email, req.Captcha)
 	if err != nil {
@@ -230,7 +232,7 @@ func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 		Account:  req.Email,
 		Password: req.Password,
 		Email:    req.Email,
-		Nickname: req.Nickname,
+		Nickname: req.Email,
 		//Avatar:   nil,
 	}
 	err = userdao.UserInfoDao.AddUser(u)
@@ -250,7 +252,7 @@ func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
-
+	category.CategoryUserDao.InitCategory(appU.Id)
 	tm.VerifyCodeU.ClearLimit(req.Email)
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, ""))
 	return err

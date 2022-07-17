@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/glide-im/api/internal/auth"
+	"github.com/glide-im/api/internal/dao/userdao"
 	"net/http"
 	"strings"
 )
@@ -30,8 +31,14 @@ func guestMiddleware(context *gin.Context) {
 		context.Abort()
 		return
 	}
-	context.Set(CtxGuestKeyAuthInfo, authInfo)
-	// 这里通过检测 设置他的 app_id
 
+	if authInfo.Uid == 0 {
+		context.Status(http.StatusUnauthorized)
+		context.Abort()
+		return
+	}
+
+	authInfo.AppId = userdao.UserInfoDao.GetGuestUserAppId(authInfo.Uid)
+	context.Set(CtxKeyAuthInfo, authInfo)
 	context.Next()
 }

@@ -3,6 +3,7 @@ package userdao
 import (
 	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/dao/uid"
+	"github.com/glide-im/api/internal/dao/wrapper/app"
 	"github.com/glide-im/api/internal/dao/wrapper/category"
 	"github.com/glide-im/api/internal/dao/wrapper/collect"
 	"github.com/glide-im/api/internal/pkg/db"
@@ -112,7 +113,7 @@ func (d *UserInfoDaoImpl) GetUser(uid int64) (*User, error) {
 
 func (d *UserInfoDaoImpl) GetUserSimpleInfo(uid ...int64) ([]*User, error) {
 	var us []*User
-	query := db.DB.Model(&User{}).Where("uid IN (?)", uid).Select("uid, account, nickname, avatar").Find(&us)
+	query := db.DB.Model(&User{}).Where("uid IN (?)", uid).Select("uid, account, nickname, avatar, email, role").Find(&us)
 	if err := common.MustFind(query); err != nil {
 		return nil, err
 	}
@@ -155,4 +156,16 @@ func (d *UserInfoDaoImpl) UpdateProfile(uid int64, profile UpdateProfile) error 
 		Email:    profile.Email,
 	})
 	return common.JustError(query)
+}
+
+func (d *UserInfoDaoImpl) GetUserAppId(uid int64) int64 {
+	var appModel app.App
+	db.DB.Model(&app.App{}).Where("uid = ?", uid).Find(&appModel)
+	return appModel.Id
+}
+
+func (d *UserInfoDaoImpl) GetGuestUserAppId(uid int64) int64 {
+	var user User
+	db.DB.Model(&User{}).Where("uid = ?", uid).Find(&user)
+	return user.AppID
 }

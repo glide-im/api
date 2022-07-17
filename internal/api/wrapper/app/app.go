@@ -81,10 +81,11 @@ func (a *PlatFromApi) Delete(ctx *route.Context) error {
 // 获取联络人
 func (a *PlatFromApi) GetGuestToId(ctx *route.Context) error {
 	model := db.DB.Model(&app.App{})
-	appid := ctx.Context.GetHeader("app_id")
-	model.Where("app_id = ?", appid).Delete(&app.App{})
+	var appModel app.App
+	appid := ctx.AppID
+	model.Where("id = ?", appid).Find(&appModel)
 	ctx.ReturnSuccess(map[string]int64{
-		"uid": 543813,
+		"uid": appModel.Uid,
 	})
 	return nil
 }

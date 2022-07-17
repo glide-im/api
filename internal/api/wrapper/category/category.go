@@ -1,7 +1,6 @@
 package category
 
 import (
-	"fmt"
 	route "github.com/glide-im/api/internal/api/router"
 	"github.com/glide-im/api/internal/dao/common"
 	"github.com/glide-im/api/internal/dao/wrapper/category"
@@ -15,7 +14,7 @@ type CategoryApi struct {
 
 // 分类列表
 func (a *CategoryApi) List(ctx *route.Context) error {
-	model := category.CategoryDao.GetModel(1)
+	model := category.CategoryDao.GetModel(ctx.AppID)
 	list := []category.Category{}
 	model.Order("weight desc").Find(&list)
 
@@ -25,7 +24,7 @@ func (a *CategoryApi) List(ctx *route.Context) error {
 
 // 分类新增
 func (a *CategoryApi) Store(ctx *route.Context, request *CategoryStoreRequest) error {
-	model := category.CategoryDao.GetModel(1)
+	model := category.CategoryDao.GetModel(ctx.AppID)
 	store := category.Category{
 		AppID:  1,
 		Name:   request.Name,
@@ -47,14 +46,13 @@ func (a *CategoryApi) Updates(ctx *route.Context, request *CategoryUpdateRequest
 	for _, _category := range categories {
 		model := category.CategoryDao.GetModel(ctx.AppID)
 		store := category.Category{
-			AppID:  1,
+			AppID:  ctx.AppID,
 			Name:   _category.Name,
 			Weight: _category.Weight,
 			Icon:   _category.Icon,
 		}
 		var _db *gorm.DB
 		if _category.ID == 0 {
-			fmt.Println(store)
 			_db = db.DB.Model(&category.Category{}).Create(&store)
 		} else {
 			_db = model.Where("id = ?", _category.ID).Updates(store)
@@ -71,7 +69,7 @@ func (a *CategoryApi) Updates(ctx *route.Context, request *CategoryUpdateRequest
 
 // 分类更新
 func (a *CategoryApi) Update(ctx *route.Context, request *CategoryStoreRequest) error {
-	model := category.CategoryDao.GetModel(1)
+	model := category.CategoryDao.GetModel(ctx.AppID)
 	update := category.Category{
 		AppID:  1,
 		Name:   request.Name,
@@ -86,7 +84,7 @@ func (a *CategoryApi) Update(ctx *route.Context, request *CategoryStoreRequest) 
 
 // 分类删除
 func (a *CategoryApi) Delete(ctx *route.Context) error {
-	model := category.CategoryDao.GetModel(1)
+	model := category.CategoryDao.GetModel(ctx.AppID)
 	id := ctx.Context.Param("id")
 	model.Where("id = ?", id).Delete(&category.Category{})
 	ctx.ReturnSuccess(nil)
@@ -97,7 +95,7 @@ func (a *CategoryApi) Delete(ctx *route.Context) error {
 func (a *CategoryApi) Order(ctx *route.Context, request *CategoryOrderRequest) error {
 	orders := request.Orders
 	for _, order := range orders {
-		model := category.CategoryDao.GetModel(1)
+		model := category.CategoryDao.GetModel(ctx.AppID)
 		model.Where("id = ?", order.ID).Update("weight", order.Weight)
 	}
 	ctx.ReturnSuccess(nil)

@@ -40,6 +40,8 @@ type UserInfoDaoInterface interface {
 	GetUserSimpleInfo(uid ...int64) ([]*User, error)
 	GetUserCategory(uid []int64, app_od int64) ([]int64, error)
 	GetCollectData(uid int64, app_id int64) (collect.CollectData, error)
+	GetUserAppId(uid int64) int64
+	GetGuestUserAppId(uid int64) int64
 }
 
 type ContactsDaoInterface interface {
