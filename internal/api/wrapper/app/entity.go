@@ -21,6 +21,10 @@ type AppOrderRequest struct {
 	Orders []Orders `json:"orders"`
 }
 
+type UpdateHostRequest struct {
+	Host string `json:"host" validate:"required|host"`
+}
+
 func (s *AppStoreRequest) Validate() error {
 	if err := validate.ValidateHandle(s); err != nil {
 		return err

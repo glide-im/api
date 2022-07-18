@@ -99,6 +99,7 @@ func initRoute() {
 				post(":id", platformAppApi.Update),
 				delete_("delete/:id", platformAppApi.Delete),
 				get("list", platformAppApi.List),
+				post("host", platformAppApi.UpdateHost),
 			),
 			group("msg",
 				post("id", msgApi.GetMessageID),
