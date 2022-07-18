@@ -23,6 +23,8 @@ func SendMessage(uid int64, device int64, m *messages.GlideMessage) {
 
 // Service IM 服务的接口
 type Service interface {
+	IsOnline(id string, device string) (bool, error)
+	Exit(id string, device string) error
 	Logout(uid string, device string) error
 	EnqueueMessage(uid string, device string, message *messages.GlideMessage) error
 }
@@ -36,15 +38,25 @@ func MustSetupClient(addr string, port int, name string) {
 		EtcdServers: nil,
 		Selector:    nil,
 	}
-	cli, err := client.NewIMServiceClient(opt)
+	cli, err := client.NewClient(opt)
 	if err != nil {
 		panic(err)
 	}
 	IM = &imServiceRpcClient{cli}
 }
 
+// TODO: optimize 2022-7-18 12:20:03 使用缓存用户连接网关等信息
 type imServiceRpcClient struct {
-	cli *client.IMServiceClient
+	cli *client.Client
+}
+
+func (c imServiceRpcClient) IsOnline(id string, device string) (bool, error) {
+	online := c.cli.IsOnline(gate.NewID("", id, device))
+	return online, nil
+}
+
+func (c imServiceRpcClient) Exit(id string, device string) error {
+	return c.cli.ExitClient(gate.NewID("", id, device))
 }
 
 func (c imServiceRpcClient) Logout(uid string, device string) error {
