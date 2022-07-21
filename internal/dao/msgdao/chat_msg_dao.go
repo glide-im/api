@@ -136,3 +136,9 @@ func (chatMsgDaoImpl) DelOfflineMessage(uid int64, mid []int64) error {
 	query := db.DB.Where("uid = ? AND m_id IN (?)", uid, mid).Delete(&OfflineMessage{})
 	return query.Error
 }
+
+func (chatMsgDaoImpl) GetChatLastMessage(from int64, to int64) ChatMessage {
+	var message ChatMessage
+	db.DB.Model(ChatMessage{}).Where("(`from` = ? AND `to` = ?) or (`from` = ? AND `to` = ?)", from, to, to, from).Order("m_id desc").Last(&message)
+	return message
+}

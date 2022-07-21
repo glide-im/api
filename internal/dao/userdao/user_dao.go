@@ -57,9 +57,9 @@ func (d *UserInfoDaoImpl) AccountExists(email string, excludeIds ...int64) (bool
 	return count > 0, nil
 }
 
-func (d *UserInfoDaoImpl) HasUser(uid int64) (bool, error) {
+func (d *UserInfoDaoImpl) HasUser(uid int64, selfId int64) (bool, error) {
 	var count int64
-	query := db.DB.Model(&User{}).Where("uid = ?", uid).Count(&count)
+	query := db.DB.Model(&User{}).Where("uid = ? and app_id = ?", uid, selfId).Count(&count)
 	if err := common.ResolveError(query); err != nil {
 		return false, err
 	}
@@ -116,6 +116,15 @@ func (d *UserInfoDaoImpl) GetUserSimpleInfo(uid ...int64) ([]*User, error) {
 	query := db.DB.Model(&User{}).Where("uid IN (?)", uid).Select("uid, account, nickname, avatar, email, role").Find(&us)
 	if err := common.MustFind(query); err != nil {
 		return nil, err
+	}
+	return us, nil
+}
+
+func (d *UserInfoDaoImpl) GetUserSimpleOneInfo(uid int64) (User, error) {
+	var us User
+	query := db.DB.Model(&User{}).Where("uid IN (?)", uid).Select("uid, account, nickname, avatar, email, role").Find(&us)
+	if err := common.MustFind(query); err != nil {
+		return us, err
 	}
 	return us, nil
 }

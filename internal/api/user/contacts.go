@@ -49,7 +49,7 @@ func (a *UserApi) AddContact(ctx *route.Context, request *AddContacts) error {
 	if ctx.Uid == request.Uid {
 		return errAddSelf
 	}
-	hasUser, err := userdao.UserInfoDao.HasUser(request.Uid)
+	hasUser, err := userdao.UserInfoDao.HasUser(request.Uid, ctx.AppID)
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
@@ -97,17 +97,42 @@ func (a *UserApi) GetContactList(ctx *route.Context) error {
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
-
+	selfContact := userdao.Contacts{
+		Fid:     "",
+		Uid:     ctx.Uid,
+		Id:      ctx.Uid,
+		Remark:  "",
+		Type:    0,
+		Status:  0,
+		LastMid: 0,
+	}
 	resp := []ContactResponse{}
+	contacts = append(contacts, &selfContact)
 	for _, contact := range contacts {
 		if contact.Type == userdao.ContactsTypeGroup {
 			// TODO 2022-4-24 member flag
 			_ = group.Interface.UpdateMember(contact.Id, ctx.Uid, 1)
 		}
+		user, _ := userdao.UserInfoDao.GetUserSimpleOneInfo(contact.Id)
+		cateIds, _ := userdao.UserInfoDao.GetUserCategory([]int64{contact.Id}, ctx.AppID)
+		collect, _ := userdao.UserInfoDao.GetCollectData(contact.Id, ctx.AppID)
+
+		nickname := user.Nickname
+		if ctx.Uid == contact.Id {
+			user.Nickname = nickname + "(自己)"
+		}
+
 		resp = append(resp, ContactResponse{
-			Id:     contact.Id,
-			Type:   contact.Type,
-			Remark: contact.Remark,
+			Id:          contact.Id,
+			Uid:         contact.Id,
+			Type:        contact.Type,
+			Remark:      contact.Remark,
+			Nickname:    user.Nickname,
+			Account:     user.Account,
+			Avatar:      user.Avatar,
+			CategoryIds: cateIds,
+			Collect:     collect,
+			LastMessage: msgdao.ChatMsgDaoImpl.GetChatLastMessage(ctx.Uid, contact.Id),
 		})
 	}
 

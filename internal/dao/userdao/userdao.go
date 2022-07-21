@@ -27,7 +27,7 @@ type Cache interface {
 type UserInfoDaoInterface interface {
 	AddUser(u *User) error
 	DelUser(uid int64) error
-	HasUser(uid int64) (bool, error)
+	HasUser(uid int64, appId int64) (bool, error)
 	AccountExists(account string, excludeIds ...int64) (bool, error)
 
 	UpdateNickname(uid int64, nickname string) error
@@ -42,6 +42,7 @@ type UserInfoDaoInterface interface {
 	GetCollectData(uid int64, app_id int64) (collect.CollectData, error)
 	GetUserAppId(uid int64) int64
 	GetGuestUserAppId(uid int64) int64
+	GetUserSimpleOneInfo(uid int64) (User, error)
 }
 
 type ContactsDaoInterface interface {
