@@ -1,6 +1,9 @@
 package user
 
-import "github.com/glide-im/api/internal/dao/wrapper/collect"
+import (
+	"github.com/glide-im/api/internal/dao/msgdao"
+	"github.com/glide-im/api/internal/dao/wrapper/collect"
+)
 
 type InfoRequest struct {
 	Uid []int64
@@ -31,13 +34,20 @@ type UpdateEmailRequest struct {
 }
 
 type ContactResponse struct {
-	Id     int64
-	Type   int8
-	Remark string
+	Id          int64               `json:"id"`
+	Uid         int64               `json:"uid"`
+	Type        int8                `json:"type"`
+	Remark      string              `json:"remark"`
+	Nickname    string              `json:"nickname"`
+	Account     string              `json:"account"`
+	Avatar      string              `json:"avatar"`
+	LastMessage msgdao.ChatMessage  `json:"lastMessage"`
+	CategoryIds []int64             `json:"categoryIds"`
+	Collect     collect.CollectData `json:"collect"`
 }
 
 type AddContacts struct {
-	Uid    int64
+	Uid    int64 `json:"uid"`
 	Remark string
 }
 

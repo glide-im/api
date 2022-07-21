@@ -10,6 +10,7 @@ import (
 	platformApp "github.com/glide-im/api/internal/api/wrapper/app"
 	"github.com/glide-im/api/internal/api/wrapper/articles"
 	"github.com/glide-im/api/internal/api/wrapper/category"
+	newMsgApi "github.com/glide-im/api/internal/api/wrapper/msg"
 )
 
 func initRoute() {
@@ -26,6 +27,7 @@ func initRoute() {
 	msgApi := msg.MsgApi{}
 	csApi := cs.CsApi{}
 	appGuestApi := auth.AuthApi{}
+	messageApi := newMsgApi.MessageApi{}
 
 	routes := group("api",
 		group("app",
@@ -116,6 +118,10 @@ func initRoute() {
 			group("session",
 				post("recent", msgApi.GetRecentSessions),
 				post("get", msgApi.GetOrCreateSession),
+			),
+			group("message",
+				post("list", messageApi.GetMessageList),
+				post("read", messageApi.MessageRead),
 			),
 			group("cs",
 				post("get", csApi.GetRecentChatMessage),

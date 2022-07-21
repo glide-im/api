@@ -10,7 +10,7 @@ type chatMsgMock struct {
 }
 
 func MockChatMsg(queryDelay time.Duration) {
-	ChatMsgDaoImpl = &chatMsgMock{s: queryDelay}
+	//ChatMsgDaoImpl = &chatMsgMock{s: queryDelay}
 }
 
 func (c *chatMsgMock) GetChatMessage(mid ...int64) ([]*ChatMessage, error) {

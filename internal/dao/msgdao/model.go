@@ -3,25 +3,25 @@ package msgdao
 // ChatMessage 一对一聊天全量消息
 type ChatMessage struct {
 	// MID 消息 ID
-	MID int64 `gorm:"primaryKey"`
+	MID int64 `gorm:"primaryKey" json:"mid"`
 	// SessionID 会话标识由发送者与接收者ID拼接成, ID大的放前面
-	SessionID string
+	SessionID string `json:"session_id"`
 	// CliSeq 发送者消息 seq
-	CliSeq int64
+	CliSeq int64 `json:"cliSeq"`
 	// From 发送者ID
-	From int64
+	From int64 `json:"from"`
 	// To 接收者ID
-	To int64
+	To int64 `json:"to"`
 	// Type 消息类型
-	Type int32
+	Type int32 `json:"type"`
 	// SendAt 客户端发送时间
-	SendAt int64
+	SendAt int64 `json:"send_at"`
 	// CreateAt 消息创建时间
-	CreateAt int64
+	CreateAt int64 `json:"create_at"`
 	// Content 消息内容
-	Content string
+	Content string `json:"content"`
 	// Status 消息状态
-	Status int
+	Status int `json:"status"`
 }
 
 // Session 会话, 记录会话的情况
