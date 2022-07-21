@@ -4,6 +4,7 @@ import (
 	comm2 "github.com/glide-im/api/internal/api/comm"
 	"github.com/glide-im/api/internal/api/router"
 	"github.com/glide-im/api/internal/dao/msgdao"
+	"github.com/glide-im/api/internal/im"
 	"github.com/glide-im/glide/pkg/logger"
 	"github.com/glide-im/glide/pkg/messages"
 	"math"
@@ -11,6 +12,37 @@ import (
 )
 
 type ChatMsgApi struct{}
+
+type RecallNotify struct {
+	Mid  int64 `json:"mid,omitempty"`
+	From int64 `json:"from,omitempty"`
+}
+
+func (c *ChatMsgApi) RecallMessage(ctx *route.Context, request *RecallMessageRequest) error {
+
+	// TODO 区分群聊单聊
+	err := msgdao.ChatMsgDaoImpl.UpdateChatMessageStatus(request.Mid, ctx.Uid, request.To, msgdao.ChatMessageStatusRecalled)
+	if err != nil {
+		return err
+	}
+
+	switch request.Type {
+	case 1:
+		s := &RecallNotify{
+			Mid:  request.Mid,
+			From: ctx.Uid,
+		}
+		// 客户端需要处理 message.update 这个 action, 否则无法撤回
+		message := messages.NewMessage(0, "message.update", s)
+		_ = im.SendMessageToAllDevice(request.To, message)
+	case 2:
+		// todo 群聊
+	}
+
+	// 撤回成功
+	ctx.ReturnSuccess(nil)
+	return nil
+}
 
 //goland:noinspection GoPreferNilSlice
 func (*ChatMsgApi) GetRecentChatMessage(ctx *route.Context, request *RecentChatMessageRequest) error {

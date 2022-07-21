@@ -4,6 +4,12 @@ import (
 	"github.com/glide-im/api/internal/dao/msgdao"
 )
 
+type RecallMessageRequest struct {
+	Mid  int64 `json:"mid"`
+	To   int64 `json:"to"`   // 会话目标 id
+	Type int64 `json:"type"` // 会话类型, 1单聊, 2群聊
+}
+
 type MessageResponse struct {
 	Mid      int64
 	CliSeq   int64
