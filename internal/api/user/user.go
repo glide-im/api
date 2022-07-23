@@ -134,7 +134,7 @@ func (a *UserApi) UserAuthProfile(ctx *route.Context) error {
 		return comm2.NewDbErr(err)
 	}
 	user := info[0]
-	profile := userdao.User{
+	profile := UserProfileResponse{
 		AppID:    ctx.AppID,
 		Uid:      ctx.Uid,
 		Account:  user.Account,
@@ -142,7 +142,7 @@ func (a *UserApi) UserAuthProfile(ctx *route.Context) error {
 		Phone:    user.Phone,
 		Nickname: user.Nickname,
 		Avatar:   user.Avatar,
-		Role:     user.Role,
+		Device:   ctx.Device,
 	}
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, profile))
 	return nil

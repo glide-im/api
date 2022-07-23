@@ -10,8 +10,9 @@ var ChatMsgDaoImpl ChatMsgDao = chatMsgDaoImpl{}
 
 const (
 	ChatMessageStatusDefault  = 0
-	ChatMessageStatusRecalled = 1
+	ChatMessageStatusRecalled = 1 // 撤回
 	ChatMessageStatusDisabled = 2
+	ChatMessageStatusRead     = 3 // 已读
 )
 
 type chatMsgDaoImpl struct {
@@ -67,7 +68,7 @@ func (chatMsgDaoImpl) GetChatMessage(mid ...int64) ([]*ChatMessage, error) {
 func (chatMsgDaoImpl) UpdateChatMessageStatus(mid int64, from, to int64, status int) error {
 	u := ChatMessage{}
 	update := db.DB.Model(&u).Where("`m_id` = ? AND `from` = ? AND `to` = ?", mid, from, to).UpdateColumn("status", status)
-	return common.MustUpdate(update)
+	return common.JustError(update)
 }
 
 func (chatMsgDaoImpl) AddChatMessage(message *ChatMessage) (bool, error) {

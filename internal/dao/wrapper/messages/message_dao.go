@@ -31,6 +31,6 @@ func (receiver *MessageDao) GetMessages(from int64, to int64, pageSize int, page
 	return chatMessages
 }
 
-func (receiver *MessageDao) MessageRead(m_ids []int64) {
-	db.DB.Model(msgdao.ChatMessage{}).Where("m_id in (?)", m_ids).UpdateColumn("status", 1)
+func (receiver *MessageDao) MessageRead(session_id string, uid int64) {
+	db.DB.Model(msgdao.ChatMessage{}).Where("`session_id` = ?", session_id).Where("`to` = ?", uid).UpdateColumn("status", 1)
 }

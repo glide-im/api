@@ -98,5 +98,5 @@ type GroupMsgStateRequest struct {
 }
 
 type MessageIDResponse struct {
-	Mid int64
+	Mid int64 `json:"mid"`
 }

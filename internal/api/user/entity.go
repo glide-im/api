@@ -6,16 +6,16 @@ import (
 )
 
 type InfoRequest struct {
-	Uid []int64
+	Uid []int64 `json:"uid"`
 }
 
 type InfoResponse struct {
-	Uid         int64
-	Nickname    string
-	Account     string
-	Avatar      string
-	CategoryIds []int64
-	Collect     collect.CollectData
+	Uid         int64               `json:"uid"`
+	Nickname    string              `json:"nick_name"`
+	Account     string              `json:"account"`
+	Avatar      string              `json:"avatar"`
+	CategoryIds []int64             `json:"categoryIds"`
+	Collect     collect.CollectData `json:"collect"`
 }
 
 type InfoListResponse struct {
@@ -23,9 +23,9 @@ type InfoListResponse struct {
 }
 
 type UpdateProfileRequest struct {
-	Nickname string `validate:"required,gte=2,lte=16"`
-	Password string
-	Avatar   string `validate:"required,url"`
+	Nickname string `validate:"required,gte=2,lte=16" json:"nick_name"`
+	Password string `json:"password"`
+	Avatar   string `validate:"required,url" json:"avatar"`
 }
 
 type UpdateEmailRequest struct {
@@ -46,32 +46,43 @@ type ContactResponse struct {
 	Collect     collect.CollectData `json:"collect"`
 }
 
+type UserProfileResponse struct {
+	AppID    int64  `json:"app_id"`
+	Uid      int64  `json:"uid"`
+	Account  string `json:"account"`
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
+	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
+	Device   int64  `json:"device"`
+}
+
 type AddContacts struct {
-	Uid    int64 `json:"uid"`
-	Remark string
+	Uid    int64  `json:"uid"`
+	Remark string `json:"remark"`
 }
 
 type DeleteContactsRequest struct {
-	Uid int64
+	Uid int64 `json:"uid"`
 }
 
 type UpdateRemarkRequest struct {
-	Uid    int64
-	Remark string
+	Uid    int64  `json:"uid"`
+	Remark string `json:"remark"`
 }
 
 type UpdateLastMidRequest struct {
-	Uid int64
-	Mid int64
+	Uid int64 `json:"uid"`
+	Mid int64 `json:"mid"`
 }
 
 type ContactApproval struct {
-	Uid     int64
-	Agree   bool
-	Comment string
+	Uid     int64  `json:"uid"`
+	Agree   bool   `json:"agree"`
+	Comment string `json:"comment"`
 }
 
 type OnlineUser struct {
-	Uid    int64
-	Before int64
+	Uid    int64 `json:"uid"`
+	Before int64 `json:"before"`
 }

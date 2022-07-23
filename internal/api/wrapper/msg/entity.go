@@ -9,5 +9,5 @@ type MessageQueryRequest struct {
 }
 
 type MessageReadRequest struct {
-	Mids []int64 `json:"m_ids"`
+	SessionId string `json:"session_id"`
 }

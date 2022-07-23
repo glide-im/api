@@ -1,6 +1,7 @@
 package msg
 
 import (
+	"fmt"
 	comm2 "github.com/glide-im/api/internal/api/comm"
 	"github.com/glide-im/api/internal/api/router"
 	"github.com/glide-im/api/internal/dao/msgdao"
@@ -34,7 +35,11 @@ func (c *ChatMsgApi) RecallMessage(ctx *route.Context, request *RecallMessageReq
 		}
 		// 客户端需要处理 message.update 这个 action, 否则无法撤回
 		message := messages.NewMessage(0, "message.update", s)
-		_ = im.SendMessageToAllDevice(request.To, message)
+		err = im.SendMessageToAllDevice(request.To, message)
+		if err != nil {
+			fmt.Println("errerrerr", err)
+			return nil
+		}
 	case 2:
 		// todo 群聊
 	}

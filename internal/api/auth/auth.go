@@ -102,6 +102,7 @@ func (*AuthApi) SignIn(ctx *route.Context, request *SignInRequest) error {
 		NickName: user.Nickname,
 		Email:    user.Email,
 		Phone:    user.Phone,
+		Device:   request.Device,
 	}
 	appProfile := app.AppDao.GetAppProfile(user.Uid)
 	tk.App = appProfile

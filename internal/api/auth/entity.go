@@ -6,12 +6,12 @@ import (
 )
 
 type AuthTokenRequest struct {
-	Token string
+	Token string `json:"token"`
 }
 
 type SignInRequest struct {
-	Device   int64
-	Email    string `json:"email" validate:"required,email"`
+	Device   int64  `json:"device"`
+	Email    string `json:"email"  validate:"required,email"`
 	Password string `json:"password" validate:"required"`
 }
 
@@ -32,8 +32,8 @@ type ForgetRequest struct {
 }
 
 type GuestRegisterRequest struct {
-	Avatar   string
-	Nickname string
+	Avatar   string `json:"avatar"`
+	Nickname string `json:"nickname"`
 }
 
 type VerifyCodeRequest struct {
@@ -48,22 +48,23 @@ type GuestRegisterV2Request struct {
 
 // AuthResponse login or register result
 type AuthResponse struct {
-	Token    string
-	Uid      int64
-	Servers  []string
-	NickName string
-	App      app.App
-	Email    string `json:"email"`
-	Phone    string `json:"phone"`
+	Token    string   `json:"token"`
+	Uid      int64    `json:"uid"`
+	Servers  []string `json:"servers"`
+	NickName string   `json:"nick_name"`
+	App      app.App  `json:"app"`
+	Email    string   `json:"email"`
+	Phone    string   `json:"phone"`
+	Device   int64    `json:"device"`
 }
 
 // GuestAuthResponse login or register result
 type GuestAuthResponse struct {
-	Token    string
-	Uid      int64
-	Servers  []string
-	AppID    int64
-	NickName string
+	Token    string   `json:"token"`
+	Uid      int64    `json:"uid"`
+	Servers  []string `json:"servers"`
+	AppID    int64    `json:"app_id"`
+	NickName string   `json:"nick_name"`
 }
 
 func (request *GuestRegisterV2Request) Validate() error {

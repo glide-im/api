@@ -14,8 +14,8 @@ func (m *MessageApi) GetMessageList(ctx *route.Context, request *MessageQueryReq
 	return nil
 }
 
-func (m *MessageApi) MessageRead(ctx *route.Context, request *MessageQueryRequest) error {
-	list := messages.MessageDaoH.GetMessages(ctx.Uid, request.To, request.PageSize, request.Page, request.EndMid, request.StartMid)
-	ctx.ReturnSuccess(list)
+func (m *MessageApi) MessageRead(ctx *route.Context, request *MessageReadRequest) error {
+	messages.MessageDaoH.MessageRead(request.SessionId, ctx.Uid)
+	ctx.ReturnSuccess(nil)
 	return nil
 }
