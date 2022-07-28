@@ -3,6 +3,7 @@ package dao
 import (
 	"database/sql/driver"
 	"fmt"
+	"github.com/spf13/cast"
 	"time"
 )
 
@@ -41,4 +42,11 @@ func (t *JSONTime) Scan(v interface{}) error {
 		return nil
 	}
 	return fmt.Errorf("can not convert %v to timestamp", v)
+}
+
+func GetSessionId(to int64, from int64) string {
+	if to > from {
+		return cast.ToString(to) + "_" + cast.ToString(from)
+	}
+	return cast.ToString(from) + "_" + cast.ToString(to)
 }

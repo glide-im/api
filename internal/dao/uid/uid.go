@@ -83,6 +83,7 @@ func (g *gen) GenUid() int64 {
 	if result >= userIdEnd {
 		logger.E("uid exhausted")
 	}
+
 	return result
 }
 

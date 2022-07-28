@@ -51,6 +51,7 @@ type ChatMsgDao interface {
 	GetOfflineMessage(uid int64) ([]*OfflineMessage, error)
 	DelOfflineMessage(uid int64, mid []int64) error
 	GetChatLastMessage(from int64, to int64) ChatMessage
+	GetMessageCount(from int64, to int64) int64
 }
 
 type SessionDao interface {

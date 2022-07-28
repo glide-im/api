@@ -43,6 +43,7 @@ type UserInfoDaoInterface interface {
 	GetUserAppId(uid int64) int64
 	GetGuestUserAppId(uid int64) int64
 	GetUserSimpleOneInfo(uid int64) (User, error)
+	GetLastUserId() int64
 }
 
 type ContactsDaoInterface interface {

@@ -170,35 +170,36 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 		return comm2.NewApiBizError(4001, "访问异常")
 	}
 
-	u := &userdao.User{
-		AppID:    app_id,
-		Account:  fingerprintId,
-		Password: "",
-		Nickname: fingerprintId,
-		Avatar:   "",
-		Role:     2,
+	user := &userdao.User{
+		AppID:         app_id,
+		Account:       fingerprintId,
+		Password:      "",
+		Nickname:      fingerprintId,
+		FingerprintId: fingerprintId,
+		Avatar:        "",
+		Role:          2,
 	}
 
-	var user userdao.User
 	db.DB.Model(&userdao.User{}).Where("account = ?", fingerprintId).Find(&user)
-	fmt.Println("useruseruser", user)
 	if user.Uid == 0 {
 		isAccount = false
 	}
+	collectData := collect.GetUserUa(ctx)
+	region := collect.GetIpAddr(collectData.Ip)
 
 	if !isAccount {
-		err = userdao.UserInfoDao.AddGuestUser(u)
+		user.Nickname = fmt.Sprintf("%s(%s)", region, fingerprintId)
+		err = userdao.UserInfoDao.AddGuestUser(user)
 		if err != nil {
 			return comm2.NewDbErr(err)
 		}
 	}
 
-	collectData := collect.GetUserUa(ctx)
 	collectData.AppID = app_id
 	collectData.Device = "phone"
 	collectData.Origin = req.Origin
 	collectData.Uid = user.Uid
-	collectData.Region = collect.GetIpAddr(collectData.Ip)
+	collectData.Region = region
 	collect.CollectDataDao.UpdateOrCreate(collectData)
 
 	token, err := auth.GenerateTokenExpire(user.Uid, 3, 24*7)
