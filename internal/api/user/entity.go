@@ -14,7 +14,7 @@ type InfoResponse struct {
 	Nickname    string              `json:"nick_name"`
 	Account     string              `json:"account"`
 	Avatar      string              `json:"avatar"`
-	CategoryIds []int64             `json:"categoryIds"`
+	CategoryIds []int64             `json:"category_ids"`
 	Collect     collect.CollectData `json:"collect"`
 }
 

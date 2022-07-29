@@ -39,6 +39,18 @@ func guestMiddleware(context *gin.Context) {
 	}
 
 	authInfo.AppId = userdao.UserInfoDao.GetGuestUserAppId(authInfo.Uid)
+
+	hasUser, err := userdao.UserInfoDao.HasUser(authInfo.Uid, authInfo.AppId)
+	if err != nil {
+		context.Status(http.StatusUnauthorized)
+		context.Abort()
+		return
+	}
+	if hasUser == false {
+		context.Status(http.StatusUnauthorized)
+		context.Abort()
+		return
+	}
 	context.Set(CtxKeyAuthInfo, authInfo)
 	context.Next()
 }

@@ -148,6 +148,6 @@ func (chatMsgDaoImpl) GetChatLastMessage(from int64, to int64) ChatMessage {
 func (chatMsgDaoImpl) GetMessageCount(from int64, to int64) int64 {
 	session_id := dao.GetSessionId(from, to)
 	var count int64
-	db.DB.Model(ChatMessage{}).Where("`session_id` = ?", session_id).Where("to = ?", from).Where("`status` = 0").Count(&count)
+	db.DB.Model(ChatMessage{}).Where("`session_id` = ?", session_id).Where("`to` = ?", from).Where("`status` = 0").Count(&count)
 	return count
 }
