@@ -127,6 +127,7 @@ func initRoute() {
 			),
 			group("cs",
 				post("get", csApi.GetRecentChatMessage),
+				post("live-room", csApi.GetJoinToken),
 			),
 		))
 	routes.setup(g)
