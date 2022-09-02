@@ -30,9 +30,15 @@ func initRoute() {
 	messageApi := newMsgApi.MessageApi{}
 	chatMsgApi := msg.ChatMsgApi{}
 
+	
+
 	routes := group("api",
 		group("app",
 			get("release", appApi.GetReleaseInfo),
+		),
+		group("cs",
+			post("get", csApi.GetRecentChatMessage),
+			post("live-room", csApi.GetJoinToken),
 		),
 		group("auth",
 			post("register", authApi.Register),
@@ -124,10 +130,6 @@ func initRoute() {
 				post("list", messageApi.GetMessageList),
 				post("read", messageApi.MessageRead),
 				post("recall", chatMsgApi.RecallMessage),
-			),
-			group("cs",
-				post("get", csApi.GetRecentChatMessage),
-				post("live-room", csApi.GetJoinToken),
 			),
 		))
 	routes.setup(g)
