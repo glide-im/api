@@ -5,3 +5,11 @@ type Waiter struct {
 	Nickname string
 	Avatar   string
 }
+
+type Data struct {
+	Sign string `json:"sign"`
+}
+
+type RoomRequest struct {
+	Name string `json:"name"`
+}

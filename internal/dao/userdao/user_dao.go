@@ -2,7 +2,6 @@ package userdao
 
 import (
 	"github.com/glide-im/api/internal/dao/common"
-	"github.com/glide-im/api/internal/dao/uid"
 	"github.com/glide-im/api/internal/dao/wrapper/app"
 	"github.com/glide-im/api/internal/dao/wrapper/category"
 	"github.com/glide-im/api/internal/dao/wrapper/collect"
@@ -33,7 +32,9 @@ func (d *UserInfoDaoImpl) AddUser(u *User) error {
 }
 
 func (d *UserInfoDaoImpl) AddGuestUser(u *User) error {
-	u.Uid = uid.GenUid()
+	uid := d.GetLastUserId()
+	uid += 1
+	u.Uid = uid
 	u.CreateAt = time.Now().Unix()
 	query := db.DB.Create(u)
 	return common.ResolveError(query)
@@ -177,4 +178,10 @@ func (d *UserInfoDaoImpl) GetGuestUserAppId(uid int64) int64 {
 	var user User
 	db.DB.Model(&User{}).Where("uid = ?", uid).Find(&user)
 	return user.AppID
+}
+
+func (d *UserInfoDaoImpl) GetLastUserId() int64 {
+	var user User
+	db.DB.Model(&User{}).Order("uid desc").Select("uid").Last(&user)
+	return user.Uid
 }

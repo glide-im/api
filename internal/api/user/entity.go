@@ -14,7 +14,7 @@ type InfoResponse struct {
 	Nickname    string              `json:"nick_name"`
 	Account     string              `json:"account"`
 	Avatar      string              `json:"avatar"`
-	CategoryIds []int64             `json:"categoryIds"`
+	CategoryIds []int64             `json:"category_ids"`
 	Collect     collect.CollectData `json:"collect"`
 }
 
@@ -34,16 +34,17 @@ type UpdateEmailRequest struct {
 }
 
 type ContactResponse struct {
-	Id          int64               `json:"id"`
-	Uid         int64               `json:"uid"`
-	Type        int8                `json:"type"`
-	Remark      string              `json:"remark"`
-	Nickname    string              `json:"nickname"`
-	Account     string              `json:"account"`
-	Avatar      string              `json:"avatar"`
-	LastMessage msgdao.ChatMessage  `json:"lastMessage"`
-	CategoryIds []int64             `json:"categoryIds"`
-	Collect     collect.CollectData `json:"collect"`
+	Id           int64               `json:"id"`
+	Uid          int64               `json:"uid"`
+	Type         int8                `json:"type"`
+	Remark       string              `json:"remark"`
+	Nickname     string              `json:"nickname"`
+	Account      string              `json:"account"`
+	Avatar       string              `json:"avatar"`
+	LastMessage  msgdao.ChatMessage  `json:"lastMessage"`
+	CategoryIds  []int64             `json:"categoryIds"`
+	Collect      collect.CollectData `json:"collect"`
+	MessageCount int64               `json:"message_count"`
 }
 
 type UserProfileResponse struct {

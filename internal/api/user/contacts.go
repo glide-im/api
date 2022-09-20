@@ -123,16 +123,17 @@ func (a *UserApi) GetContactList(ctx *route.Context) error {
 		}
 
 		resp = append(resp, ContactResponse{
-			Id:          contact.Id,
-			Uid:         contact.Id,
-			Type:        contact.Type,
-			Remark:      contact.Remark,
-			Nickname:    user.Nickname,
-			Account:     user.Account,
-			Avatar:      user.Avatar,
-			CategoryIds: cateIds,
-			Collect:     collect,
-			LastMessage: msgdao.ChatMsgDaoImpl.GetChatLastMessage(ctx.Uid, contact.Id),
+			Id:           contact.Id,
+			Uid:          contact.Id,
+			Type:         contact.Type,
+			Remark:       contact.Remark,
+			Nickname:     user.Nickname,
+			Account:      user.Account,
+			Avatar:       user.Avatar,
+			CategoryIds:  cateIds,
+			Collect:      collect,
+			LastMessage:  msgdao.ChatMsgDaoImpl.GetChatLastMessage(ctx.Uid, contact.Id),
+			MessageCount: msgdao.ChatMsgDaoImpl.GetMessageCount(ctx.Uid, contact.Id),
 		})
 	}
 

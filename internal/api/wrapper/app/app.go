@@ -5,6 +5,7 @@ import (
 	comm2 "github.com/glide-im/api/internal/api/comm"
 	route "github.com/glide-im/api/internal/api/router"
 	"github.com/glide-im/api/internal/dao/common"
+	"github.com/glide-im/api/internal/dao/userdao"
 	"github.com/glide-im/api/internal/dao/wrapper/app"
 	"github.com/glide-im/api/internal/pkg/db"
 	"math/rand"
@@ -65,7 +66,10 @@ func (a *PlatFromApi) Update(ctx *route.Context, request *AppStoreRequest) error
 		Phone: request.Phone,
 	}
 	id := ctx.Context.Param("id")
-	model.Where("id = ? and uid = ?", id, ctx.Uid).Updates(platformUpdate)
+	model.Where("id = ? and uid = ?", id, ctx.Uid).Updates(&platformUpdate)
+	if len(request.Name) > 0 {
+		db.DB.Model(userdao.User{}).Where("uid = ?", ctx.Uid).Update("nickname", request.Name)
+	}
 	ctx.ReturnSuccess(platformUpdate)
 	return nil
 }
