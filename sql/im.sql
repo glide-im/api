@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.38, for Linux (x86_64)
 --
--- Host: localhost    Database: new_im
+-- Host: localhost    Database: go_im_test
 -- ------------------------------------------------------
 -- Server version	5.7.38-log
 
@@ -16,206 +16,299 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `im_friend_records`
+-- Table structure for table `im_app`
 --
 
-DROP TABLE IF EXISTS `im_friend_records`;
+DROP TABLE IF EXISTS `im_app`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `im_friend_records` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `form_id` int(11) NOT NULL,
-  `to_id` int(11) NOT NULL,
-  `status` tinyint(1) DEFAULT NULL COMMENT '0 等待通过 1 已通过 2 已拒绝',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `information` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '请求信息',
+CREATE TABLE `im_app` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键 ',
+  `app_id` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1' COMMENT '平台ID',
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '平台名称',
+  `uid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '平台名称',
+  `license` json DEFAULT NULL COMMENT '营业相关信息',
+  `status` int(6) DEFAULT NULL COMMENT '状态: 1: 待审核; 2: 审核成功; 3: 被禁用;',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `logo` varchar(266) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '手机号码',
+  `email` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '邮箱账户',
+  `host` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '设定的域名',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='平台应用表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `im_friends`
+-- Table structure for table `im_article`
 --
 
-DROP TABLE IF EXISTS `im_friends`;
+DROP TABLE IF EXISTS `im_article`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `im_friends` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `form_id` int(11) DEFAULT NULL,
-  `to_id` int(11) DEFAULT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `note` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `top_time` datetime DEFAULT NULL,
-  `status` tinyint(1) DEFAULT '0' COMMENT '0.未置顶 1.已置顶',
-  `uid` varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  `updated_at` datetime DEFAULT NULL,
+CREATE TABLE `im_article` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键 ',
+  `app_id` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1' COMMENT '平台ID',
+  `uid` int(11) NOT NULL COMMENT '发布人',
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文章标题',
+  `content` longtext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文章内容',
+  `publish_at` timestamp NULL DEFAULT NULL COMMENT '发布时间',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `weight` int(11) DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='帮助中心文章';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `im_group_messages`
+-- Table structure for table `im_category`
 --
 
-DROP TABLE IF EXISTS `im_group_messages`;
+DROP TABLE IF EXISTS `im_category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `im_group_messages` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `message` json NOT NULL COMMENT '消息实体',
-  `send_time` bigint(20) DEFAULT NULL COMMENT '消息添加时间',
-  `message_id` int(11) DEFAULT NULL COMMENT '服务端消息id',
-  `client_message_id` int(11) DEFAULT NULL COMMENT '客户端消息id',
-  `form_id` int(11) DEFAULT NULL COMMENT '消息发送者id',
-  `group_id` int(11) DEFAULT NULL COMMENT '群聊id',
+CREATE TABLE `im_category` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键 ',
+  `app_id` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1' COMMENT '平台ID',
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类名称',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `weight` int(11) DEFAULT NULL,
+  `icon` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户分类';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `im_group_user_messages`
+-- Table structure for table `im_category_user`
 --
 
-DROP TABLE IF EXISTS `im_group_user_messages`;
+DROP TABLE IF EXISTS `im_category_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `im_group_user_messages` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) DEFAULT NULL,
-  `group_id` int(11) DEFAULT NULL,
-  `status` tinyint(1) DEFAULT '0' COMMENT '0 未读 1 已读',
+CREATE TABLE `im_category_user` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键 ',
+  `app_id` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1' COMMENT '平台ID',
+  `category_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '关联分类ID',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `uid` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '关联的用户ID',
+  `form` int(6) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户 => 分类';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `im_group_users`
+-- Table structure for table `im_chat_message`
 --
 
-DROP TABLE IF EXISTS `im_group_users`;
+DROP TABLE IF EXISTS `im_chat_message`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `im_group_users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `group_id` int(11) DEFAULT NULL,
-  `remark` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `avatar` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `name` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+CREATE TABLE `im_chat_message` (
+  `m_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `session_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cli_seq` bigint(20) NOT NULL,
+  `from` bigint(20) NOT NULL,
+  `to` bigint(20) NOT NULL,
+  `type` int(11) NOT NULL,
+  `send_at` bigint(20) NOT NULL,
+  `create_at` bigint(20) NOT NULL,
+  `content` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`m_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1783 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `im_collect_data`
+--
+
+DROP TABLE IF EXISTS `im_collect_data`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `im_collect_data` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键 ',
+  `app_id` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1' COMMENT 'app id',
+  `uid` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1' COMMENT '用户ID',
+  `ip` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类名称',
+  `region` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '地区',
+  `browser` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '浏览器',
+  `device` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '设备(端)',
+  `origin` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '来源',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=179 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=334 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户数据';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `im_groups`
+-- Table structure for table `im_contacts`
 --
 
-DROP TABLE IF EXISTS `im_groups`;
+DROP TABLE IF EXISTS `im_contacts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `im_groups` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) DEFAULT NULL,
-  `group_name` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `info` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `group_avatar` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+CREATE TABLE `im_contacts` (
+  `fid` char(254) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `uid` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL,
+  `remark` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` int(11) NOT NULL,
+  `last_mid` int(11) DEFAULT NULL COMMENT '最后一次聊天更新的ID',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '联系人状态: 1: 正常关系; 2: 等待同意; 3: 双方不存在好友关系;',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`fid`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `im_messages`
+-- Table structure for table `im_group_member_model`
 --
 
-DROP TABLE IF EXISTS `im_messages`;
+DROP TABLE IF EXISTS `im_group_member_model`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `im_messages` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `msg` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `form_id` int(11) DEFAULT NULL,
-  `to_id` int(11) DEFAULT NULL,
-  `is_read` tinyint(1) DEFAULT NULL COMMENT '0 未读 1已读',
-  `msg_type` tinyint(1) DEFAULT '1',
-  `status` tinyint(1) DEFAULT NULL,
-  `data` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=591 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+CREATE TABLE `im_group_member_model` (
+  `mb_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `gid` bigint(20) DEFAULT NULL,
+  `uid` bigint(20) DEFAULT NULL,
+  `flag` bigint(20) DEFAULT NULL,
+  `type` bigint(20) DEFAULT NULL,
+  `remark` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`mb_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `im_offline_messages`
+-- Table structure for table `im_group_member_msg_state`
 --
 
-DROP TABLE IF EXISTS `im_offline_messages`;
+DROP TABLE IF EXISTS `im_group_member_msg_state`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `im_offline_messages` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `message` json DEFAULT NULL COMMENT '消息体',
-  `send_time` int(11) DEFAULT NULL COMMENT '消息接收时间',
-  `status` tinyint(1) DEFAULT NULL COMMENT '消息状态 0.未推送 1.已推送',
-  `receive_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+CREATE TABLE `im_group_member_msg_state` (
+  `mb_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `g_id` bigint(20) DEFAULT NULL,
+  `uid` bigint(20) DEFAULT NULL,
+  `last_ack_m_id` bigint(20) DEFAULT NULL,
+  `last_ack_seq` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`mb_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `im_sessions`
+-- Table structure for table `im_group_message`
 --
 
-DROP TABLE IF EXISTS `im_sessions`;
+DROP TABLE IF EXISTS `im_group_message`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `im_sessions` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '会话表',
-  `form_id` int(11) NOT NULL,
-  `to_id` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `top_status` tinyint(1) DEFAULT '0' COMMENT '0.否 1.是',
-  `top_time` timestamp NULL DEFAULT NULL,
-  `note` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '备注',
-  `channel_type` tinyint(1) DEFAULT '0' COMMENT '0.单聊 1.群聊',
-  `name` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '会话名称',
-  `avatar` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '会话头像',
-  `status` tinyint(1) DEFAULT '0' COMMENT '会话状态 0.正常 1.禁用',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+CREATE TABLE `im_group_message` (
+  `m_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `seq` bigint(20) NOT NULL,
+  `to` bigint(20) NOT NULL,
+  `from` bigint(20) NOT NULL,
+  `type` bigint(20) NOT NULL,
+  `send_at` bigint(20) NOT NULL,
+  `content` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` int(11) NOT NULL,
+  `recall_by` int(11) NOT NULL,
+  PRIMARY KEY (`m_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `im_users`
+-- Table structure for table `im_group_message_state`
 --
 
-DROP TABLE IF EXISTS `im_users`;
+DROP TABLE IF EXISTS `im_group_message_state`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `im_users` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+CREATE TABLE `im_group_message_state` (
+  `gid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `last_m_id` bigint(20) DEFAULT NULL,
+  `last_seq` bigint(20) DEFAULT NULL,
+  `last_msg_at` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`gid`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `im_group_model`
+--
+
+DROP TABLE IF EXISTS `im_group_model`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `im_group_model` (
+  `gid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mute` tinyint(1) DEFAULT NULL,
+  `flag` int(11) DEFAULT NULL,
+  `create_at` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`gid`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `im_group_msg_seq`
+--
+
+DROP TABLE IF EXISTS `im_group_msg_seq`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `im_group_msg_seq` (
+  `gid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `seq` bigint(20) DEFAULT NULL,
+  `step` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`gid`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `im_offline_message`
+--
+
+DROP TABLE IF EXISTS `im_offline_message`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `im_offline_message` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `m_id` bigint(20) DEFAULT NULL,
+  `uid` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `im_user`
+--
+
+DROP TABLE IF EXISTS `im_user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `im_user` (
+  `uid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nickname` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '头像',
-  `oauth_id` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '第三方id',
-  `bound_oauth` tinyint(1) DEFAULT '0' COMMENT '1\\github 2\\gitee',
-  `oauth_type` tinyint(1) DEFAULT NULL COMMENT '1.微博 2.github',
-  `status` tinyint(1) DEFAULT '0' COMMENT '0 离线 1 在线',
-  `bio` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '用户简介',
-  `sex` tinyint(1) DEFAULT '0' COMMENT '0 未知 1.男 2.女',
-  `client_type` tinyint(1) DEFAULT NULL COMMENT '1.web 2.pc 3.app',
-  `age` int(3) DEFAULT NULL,
-  `last_login_time` timestamp NULL DEFAULT NULL COMMENT '最后登录时间',
-  `uid` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'uid 关联',
-  `user_json` json DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fingerprint_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '指纹ID(guest账户登录使用)',
+  `update_at` bigint(20) DEFAULT NULL,
+  `create_at` bigint(20) DEFAULT NULL,
+  `app_id` int(11) DEFAULT NULL,
+  `role` int(11) DEFAULT '1' COMMENT '角色: 1: 客户; 2:访问用户;',
+  `account` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`uid`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=543843 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -227,4 +320,4 @@ CREATE TABLE `im_users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-09-20 12:27:50
+-- Dump completed on 2022-09-20 12:58:12
