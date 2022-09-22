@@ -32,6 +32,7 @@ type UserInfoDaoInterface interface {
 
 	UpdateNickname(uid int64, nickname string) error
 	UpdateAvatar(uid int64, avatar string) error
+	UpdateAppId(uid int64, appId int64) error
 	UpdatePassword(uid int64, password string) error
 	GetPassword(uid int64) (string, error)
 

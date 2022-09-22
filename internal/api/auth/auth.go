@@ -232,7 +232,7 @@ func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 	//rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
 	u := &userdao.User{
 		Account:  req.Email,
-		Password: req.Password,
+		Password: userdao.PasswordHash(req.Password),
 		Email:    req.Email,
 		Nickname: req.Email,
 		//Avatar:   nil,
@@ -254,6 +254,7 @@ func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
+	userdao.UserInfoDao.UpdateAppId(u.Uid, appU.Id)
 	category.CategoryUserDao.InitCategory(appU.Id)
 	tm.VerifyCodeU.ClearLimit(req.Email)
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, ""))
