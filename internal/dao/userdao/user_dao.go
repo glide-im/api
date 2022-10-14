@@ -167,10 +167,10 @@ func (d *UserInfoDaoImpl) GetCollectData(uid int64, app_id int64) (collect.Colle
 
 func (d *UserInfoDaoImpl) UpdateProfile(uid int64, profile UpdateProfile) error {
 	query := db.DB.Model(&User{}).Where("uid = ?", uid).Updates(User{
-		Account:  profile.Avatar,
+		Avatar:   profile.Avatar,
 		Nickname: profile.Nickname,
-		Password: profile.Password,
-		Email:    profile.Email,
+		//Password: profile.Password,
+		//Email:    profile.Email,
 	})
 	return common.JustError(query)
 }

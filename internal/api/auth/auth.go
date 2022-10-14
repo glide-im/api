@@ -129,9 +129,11 @@ func (*AuthApi) GuestRegister(ctx *route.Context, req *GuestRegisterRequest) err
 
 	account := "guest_" + randomStr(32)
 
+	hash := userdao.PasswordHash("-")
 	u := &userdao.User{
+		Email:    account,
 		Account:  account,
-		Password: "",
+		Password: hash,
 		Nickname: nickname,
 		Avatar:   avatar,
 	}
@@ -140,10 +142,10 @@ func (*AuthApi) GuestRegister(ctx *route.Context, req *GuestRegisterRequest) err
 		return comm2.NewDbErr(err)
 	}
 
-	user, err := userdao.Dao.GetUidInfoByLogin(account, "")
+	user, err := userdao.Dao.GetUidInfoByLogin(account, "-")
 	if err != nil || user.Uid == 0 {
 		if err == common.ErrNoRecordFound || user.Uid == 0 {
-			return ErrSignInAccountInfo
+			return comm2.NewApiBizError(1011, "登录失败")
 		}
 		return comm2.NewDbErr(err)
 	}
@@ -230,11 +232,16 @@ func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 	}
 
 	//rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	nickname := req.Nickname
+	if len(nickname) == 0 {
+		nickname = req.Email
+	}
 	u := &userdao.User{
 		Account:  req.Email,
 		Password: userdao.PasswordHash(req.Password),
 		Email:    req.Email,
-		Nickname: req.Email,
+		Nickname: nickname,
 		//Avatar:   nil,
 	}
 	err = userdao.UserInfoDao.AddUser(u)

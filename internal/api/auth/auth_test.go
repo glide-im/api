@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/glide-im/api/internal/api/router"
+	"github.com/glide-im/api/internal/config"
 	"github.com/glide-im/api/internal/pkg/db"
 	"github.com/glide-im/glide/pkg/logger"
 	"github.com/glide-im/glide/pkg/messages"
@@ -11,6 +12,7 @@ import (
 var authApi = AuthApi{}
 
 func init() {
+	config.MustLoad()
 	db.Init()
 }
 
@@ -32,6 +34,14 @@ func logErr(t *testing.T, err error) {
 	}
 }
 
+func TestGuestLogin(t *testing.T) {
+	err := authApi.GuestRegister(getContext(0, 0), &GuestRegisterRequest{
+		Avatar:   "a",
+		Nickname: "asdf",
+	})
+	logErr(t, err)
+}
+
 func TestAuthApi_AuthToken(t *testing.T) {
 	err := authApi.AuthToken(getContext(2, 0), &AuthTokenRequest{
 		Token: "RN9fXQtAoplDCX8uSiajitgFgCZlrcpX",
@@ -49,7 +59,7 @@ func TestAuthApi_Register(t *testing.T) {
 
 func TestAuthApi_SignIn(t *testing.T) {
 	err := authApi.SignIn(getContext(2, 0), &SignInRequest{
-		Account:  "aa",
+		Email:    "aa",
 		Password: "1234567",
 		Device:   1,
 	})

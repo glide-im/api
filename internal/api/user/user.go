@@ -21,8 +21,8 @@ func (a *UserApi) UpdateUserProfile(ctx *route.Context, request *UpdateProfileRe
 	// TODO 2021-11-29 更新我的信息
 	user := userdao.UpdateProfile{
 		Nickname: request.Nickname,
-		Password: request.Password,
-		Avatar:   request.Password,
+		//Password: request.Password,
+		Avatar: request.Avatar,
 	}
 	err := userdao.UserInfoDao.UpdateProfile(ctx.Uid, user)
 	if err != nil {

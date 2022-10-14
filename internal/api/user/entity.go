@@ -24,8 +24,8 @@ type InfoListResponse struct {
 
 type UpdateProfileRequest struct {
 	Nickname string `validate:"required,gte=2,lte=16" json:"nick_name"`
-	Password string `json:"password"`
-	Avatar   string `validate:"required,url" json:"avatar"`
+	//Password string `json:"password"`
+	Avatar string `validate:"required,url" json:"avatar"`
 }
 
 type UpdateEmailRequest struct {
