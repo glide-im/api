@@ -79,15 +79,15 @@ func (c *imServiceRpcClient) SetID(old string, new string) error {
 	return c.cli.SetClientID(gate.NewID2(old), gate.NewID2(new))
 }
 
-func (c imServiceRpcClient) IsOnline(id string, device string) bool {
+func (c *imServiceRpcClient) IsOnline(id string, device string) bool {
 	online := c.cli.IsOnline(gate.NewID("", id, device))
 	return online
 }
 
-func (c imServiceRpcClient) Exit(id string, device string) error {
+func (c *imServiceRpcClient) Exit(id string, device string) error {
 	return c.cli.ExitClient(gate.NewID("", id, device))
 }
 
-func (c imServiceRpcClient) EnqueueMessage(uid string, device string, message *messages.GlideMessage) error {
+func (c *imServiceRpcClient) EnqueueMessage(uid string, device string, message *messages.GlideMessage) error {
 	return c.cli.EnqueueMessage(gate.NewID("", uid, device), message)
 }
