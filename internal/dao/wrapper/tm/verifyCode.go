@@ -107,7 +107,8 @@ func (c *VerifyCode) SendEmail(tm string, email string, code string) error {
 	var html Writer
 	_ = res.Execute(&html, captcha)
 
-	var from = viper.GetString("Mail.MAIL_FORM")
+	var from = viper.GetString("Mail.MAIL_USERNAME")
+	//var secure = viper.GetString("Mail.MAIL_SECURE")
 	fmt.Println(html.Html)
 	e := &email2.Email{
 		To:      []string{email},

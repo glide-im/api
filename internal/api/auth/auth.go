@@ -284,7 +284,7 @@ func (*AuthApi) Forget(ctx *route.Context, req *RegisterRequest) error {
 	}
 	var user userdao.User
 	db.DB.Model(&userdao.User{}).Where("email = ?", req.Email).Find(&user)
-	err = userdao.UserInfoDao.UpdatePassword(user.Uid, req.Password)
+	err = userdao.UserInfoDao.UpdatePassword(user.Uid, userdao.PasswordHash(req.Password))
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
