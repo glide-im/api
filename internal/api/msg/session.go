@@ -1,10 +1,12 @@
 package msg
 
 import (
+	"errors"
 	"fmt"
 	comm2 "github.com/glide-im/api/internal/api/comm"
 	"github.com/glide-im/api/internal/api/router"
 	"github.com/glide-im/api/internal/dao/msgdao"
+	"github.com/glide-im/api/internal/dao/userdao"
 	"github.com/glide-im/api/internal/dao/wrapper/category"
 	"github.com/glide-im/api/internal/pkg/db"
 	"github.com/glide-im/glide/pkg/messages"
@@ -16,6 +18,18 @@ func (*MsgApi) ReadMessage(ctx *route.Context, request *ReadMessageRequest) erro
 	//if err != nil {
 	//	return comm.NewDbErr(err)
 	//}
+	return nil
+}
+
+func (*MsgApi) GetSessionTicket(ctx *route.Context, r *SessionRequest) error {
+	user, err := userdao.Dao.GetUser(ctx.Uid)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+	if user == nil {
+		return errors.New("user not found")
+	}
+	// TODO
 	return nil
 }
 

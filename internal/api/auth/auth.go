@@ -14,6 +14,7 @@ import (
 	"github.com/glide-im/api/internal/dao/wrapper/tm"
 	"github.com/glide-im/api/internal/im"
 	"github.com/glide-im/api/internal/pkg/db"
+	"github.com/glide-im/glide/pkg/gate"
 	"github.com/glide-im/glide/pkg/messages"
 	"math/rand"
 	"strconv"
@@ -111,6 +112,49 @@ func (*AuthApi) SignIn(ctx *route.Context, request *SignInRequest) error {
 	ctx.Uid = user.Uid
 	ctx.Device = request.Device
 	ctx.Response(resp)
+	return nil
+}
+
+func (*AuthApi) SignInV2(ctx *route.Context, request *SignInRequest) error {
+	user, err := userdao.Dao.GetUidInfoByLogin(request.Email, request.Password)
+	if err != nil || user.Uid == 0 {
+		if err == common.ErrNoRecordFound || user.Uid == 0 {
+			return ErrSignInAccountInfo
+		}
+		return comm2.NewDbErr(err)
+	}
+
+	credentials := gate.ClientAuthCredentials{
+		Type:       0,
+		UserID:     strconv.FormatInt(user.Uid, 10),
+		DeviceID:   strconv.FormatInt(request.Device, 10),
+		DeviceName: "",
+		Secrets: &gate.ClientSecrets{
+			MessageDeliverSecret: user.MessageDeliverSecret,
+		},
+		ConnectionID: "",
+		Timestamp:    time.Now().UnixMilli(),
+	}
+
+	token, err := auth.GenerateCredentials(&credentials)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+
+	tk := AuthResponse{
+		Uid:        user.Uid,
+		Token:      "",
+		Credential: token,
+		Servers:    host,
+		NickName:   user.Nickname,
+		Email:      user.Email,
+		Phone:      user.Phone,
+		Device:     request.Device,
+	}
+	tk.App = app.AppDao.GetAppProfile(user.Uid)
+	ctx.Uid = user.Uid
+	ctx.Device = request.Device
+	ctx.ReturnSuccess(tk)
 	return nil
 }
 

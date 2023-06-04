@@ -3,6 +3,7 @@ package auth
 import (
 	"github.com/glide-im/api/internal/dao/wrapper/app"
 	"github.com/glide-im/api/internal/pkg/validate"
+	"github.com/glide-im/glide/pkg/gate"
 )
 
 type AuthTokenRequest struct {
@@ -48,14 +49,15 @@ type GuestRegisterV2Request struct {
 
 // AuthResponse login or register result
 type AuthResponse struct {
-	Token    string   `json:"token"`
-	Uid      int64    `json:"uid"`
-	Servers  []string `json:"servers"`
-	NickName string   `json:"nick_name"`
-	App      app.App  `json:"app"`
-	Email    string   `json:"email"`
-	Phone    string   `json:"phone"`
-	Device   int64    `json:"device"`
+	Token      string                    `json:"token"`
+	Uid        int64                     `json:"uid"`
+	Servers    []string                  `json:"servers"`
+	NickName   string                    `json:"nick_name"`
+	App        app.App                   `json:"app"`
+	Email      string                    `json:"email"`
+	Phone      string                    `json:"phone"`
+	Device     int64                     `json:"device"`
+	Credential *gate.EncryptedCredential `json:"credential,omitempty"`
 }
 
 // GuestAuthResponse login or register result

@@ -1,11 +1,11 @@
 package im
 
 import (
+	"github.com/glide-im/glide/im_service/client"
 	"github.com/glide-im/glide/pkg/gate"
 	"github.com/glide-im/glide/pkg/logger"
 	"github.com/glide-im/glide/pkg/messages"
 	"github.com/glide-im/glide/pkg/rpc"
-	"github.com/glide-im/im-service/pkg/client"
 	"strconv"
 )
 
@@ -39,9 +39,6 @@ func SendMessageToAllDevice(uid int64, m *messages.GlideMessage) error {
 // Service IM 服务的接口
 type Service interface {
 
-	// IsOnline 获取指定 id 用户指定设备是否在线, device 目前有四个值 1,2,3,4
-	IsOnline(id string, device string) bool
-
 	// Exit 退出特定用户特定设备, 多个设备需要多次调用, 用户不在线会返回错误
 	Exit(id string, device string) error
 
@@ -49,8 +46,8 @@ type Service interface {
 	// 如果用户不在线, 会直接丢弃消息不会推送, 如果需要确定必达, 先判断用户是否在线, 不在线则保存到数据库, 用户上线时拉取
 	EnqueueMessage(uid string, device string, message *messages.GlideMessage) error
 
-	// SetID 设置用户 ID 老 id 不存在或新 id 已存在都会返回错误
-	SetID(old string, new string) error
+	// UpdateClientSecret 更新用户 message deliver secret
+	UpdateClientSecret(id string, secret string) error
 }
 
 // MustSetupClient 初始化 IM 服务 RPC 客户端
@@ -62,7 +59,7 @@ func MustSetupClient(addr string, port int, name string) {
 		EtcdServers: nil,
 		Selector:    nil,
 	}
-	cli, err := client.NewClient(opt)
+	cli, err := client.NewGatewayRpcImpl(opt)
 	if err != nil {
 		panic(err)
 	}
@@ -72,16 +69,15 @@ func MustSetupClient(addr string, port int, name string) {
 // TODO: optimize 2022-7-18 12:20:03 使用缓存用户连接网关等信息
 type imServiceRpcClient struct {
 	// cli 消息服务客户端, 包含群聊, 消息网关接口
-	cli *client.Client
+	cli *client.GatewayRpcImpl
+}
+
+func (c *imServiceRpcClient) UpdateClientSecret(id string, secret string) error {
+	return c.cli.UpdateClient(gate.NewID2(id), &gate.ClientSecrets{MessageDeliverSecret: secret})
 }
 
 func (c *imServiceRpcClient) SetID(old string, new string) error {
 	return c.cli.SetClientID(gate.NewID2(old), gate.NewID2(new))
-}
-
-func (c *imServiceRpcClient) IsOnline(id string, device string) bool {
-	online := c.cli.IsOnline(gate.NewID("", id, device))
-	return online
 }
 
 func (c *imServiceRpcClient) Exit(id string, device string) error {

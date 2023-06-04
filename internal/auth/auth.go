@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/glide-im/glide/pkg/auth"
 	"github.com/glide-im/glide/pkg/auth/jwt_auth"
+	"github.com/glide-im/glide/pkg/gate"
 	"strconv"
 )
 
@@ -62,4 +63,19 @@ func GenerateTokenExpire(uid int64, device int64, expireHour int64) (string, err
 	fmt.Println("strconv.FormatInt(device, 10)", strconv.FormatInt(device, 10))
 	token, err := jwtAuth.GetToken(jai)
 	return token.Token, err
+}
+
+func GenerateCredentials(c *gate.ClientAuthCredentials) (*gate.EncryptedCredential, error) {
+
+	cbcCrypto := gate.NewAesCBCCrypto([]byte("secret_key"))
+	encryptCredentials, err := cbcCrypto.EncryptCredentials(c)
+	if err != nil {
+		return nil, err
+	}
+
+	enc := gate.EncryptedCredential{
+		Version:    1,
+		Credential: string(encryptCredentials),
+	}
+	return &enc, nil
 }

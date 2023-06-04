@@ -30,8 +30,6 @@ func initRoute() {
 	messageApi := newMsgApi.MessageApi{}
 	chatMsgApi := msg.ChatMsgApi{}
 
-	
-
 	routes := group("api",
 		group("app",
 			get("release", appApi.GetReleaseInfo),
@@ -45,6 +43,7 @@ func initRoute() {
 			post("forget", authApi.Forget),
 			post("guest", authApi.GuestRegister),
 			post("signin", authApi.SignIn),
+			post("signin_v2", authApi.SignInV2),
 			post("token", authApi.AuthToken),
 			post("verifyCode", authApi.VerifyCode),
 			post("logout", authApi.Logout),
@@ -125,6 +124,7 @@ func initRoute() {
 			group("session",
 				post("recent", msgApi.GetRecentSessions),
 				post("get", msgApi.GetOrCreateSession),
+				post("ticket", msgApi.GetSessionTicket),
 			),
 			group("message",
 				post("list", messageApi.GetMessageList),

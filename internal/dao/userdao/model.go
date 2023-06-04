@@ -1,17 +1,18 @@
 package userdao
 
 type User struct {
-	AppID         int64  `json:"app_id,omitempty"`
-	Uid           int64  `gorm:"primaryKey"`
-	Account       string `gorm:"unique"`
-	Email         string `json:"email" gorm:"unique"`
-	Phone         string `json:"phone" gorm:"unique"`
-	Nickname      string
-	Password      string
-	Avatar        string
-	CreateAt      int64
-	Role          int
-	FingerprintId string `json:"fingerprint_id"`
+	AppID                int64  `json:"app_id,omitempty"`
+	Uid                  int64  `gorm:"primaryKey"`
+	Account              string `gorm:"unique"`
+	Email                string `json:"email" gorm:"unique"`
+	Phone                string `json:"phone" gorm:"unique"`
+	Nickname             string
+	Password             string
+	Avatar               string
+	CreateAt             int64
+	Role                 int
+	FingerprintId        string `json:"fingerprint_id"`
+	MessageDeliverSecret string `json:"message_deliver_secret"`
 	//CategoryUser []category.CategoryUser `gorm:"foreignKey:Uid;references:Uid"`
 }
 
