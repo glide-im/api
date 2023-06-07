@@ -71,6 +71,10 @@ func (d *UserInfoDaoImpl) UpdateNickname(uid int64, nickname string) error {
 	return d.update(uid, "nickname", nickname)
 }
 
+func (d *UserInfoDaoImpl) UpdateSecret(uid int64, secret string) error {
+	return d.update(uid, "secret", secret)
+}
+
 func (d *UserInfoDaoImpl) UpdateAvatar(uid int64, avatar string) error {
 	return d.update(uid, "avatar", avatar)
 }

@@ -12,7 +12,7 @@ type MsgApi struct {
 	*ChatMsgApi
 }
 
-func (MsgApi) GetMessageID(ctx *route.Context) error {
+func (*MsgApi) GetMessageID(ctx *route.Context) error {
 	id, err := msgdao.GetMessageID()
 	if err != nil {
 		return comm2.NewDbErr(err)

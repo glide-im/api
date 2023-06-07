@@ -69,6 +69,37 @@ func addToUserSessionList(uid int64, sid string, updateAt int64) error {
 	return err
 }
 
+func (s *sessionDaoImpl) IsUserInWhiteList(owner string, target string) (bool, error) {
+	return false, nil
+}
+
+func (s *sessionDaoImpl) IsJustReceiveMessageFromContact(uid string) (bool, error) {
+	return false, nil
+}
+
+func (s *sessionDaoImpl) IsUserInBlackList(uid string, target string) (bool, error) {
+	return true, nil
+}
+
+func (s *sessionDaoImpl) GetUserBlackList(uid string) ([]string, error) {
+
+	return []string{}, nil
+}
+
+func (s *sessionDaoImpl) GetUserWhiteList(uid string) ([]string, error) {
+
+	return []string{}, nil
+}
+
+func (s *sessionDaoImpl) UpdateUserWhiteList(uid string, whiteList []string) error {
+
+	return nil
+}
+func (s *sessionDaoImpl) UpdateUsrBlackList(uid string, blackList []string) error {
+
+	return nil
+}
+
 func (s *sessionDaoImpl) CleanUserSessionUnread(uid1, uid2 int64, uid int64) error {
 	id, lg, _ := getSessionId(uid1, uid2)
 	key := "lg_unread"

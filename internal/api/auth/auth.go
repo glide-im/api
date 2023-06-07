@@ -174,12 +174,14 @@ func (*AuthApi) GuestRegister(ctx *route.Context, req *GuestRegisterRequest) err
 	account := "guest_" + randomStr(32)
 
 	hash := userdao.PasswordHash("-")
+	secret := randomStr(32)
 	u := &userdao.User{
-		Email:    account,
-		Account:  account,
-		Password: hash,
-		Nickname: nickname,
-		Avatar:   avatar,
+		Email:                account,
+		Account:              account,
+		Password:             hash,
+		Nickname:             nickname,
+		Avatar:               avatar,
+		MessageDeliverSecret: secret,
 	}
 	err := userdao.UserInfoDao.AddUser(u)
 	if err != nil {
@@ -216,14 +218,16 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 		return comm2.NewApiBizError(4001, "访问异常")
 	}
 
+	secret := randomStr(32)
 	user := &userdao.User{
-		AppID:         app_id,
-		Account:       fingerprintId,
-		Password:      "",
-		Nickname:      fingerprintId,
-		FingerprintId: fingerprintId,
-		Avatar:        "",
-		Role:          2,
+		AppID:                app_id,
+		Account:              fingerprintId,
+		Password:             "",
+		Nickname:             fingerprintId,
+		FingerprintId:        fingerprintId,
+		Avatar:               "",
+		Role:                 2,
+		MessageDeliverSecret: secret,
 	}
 
 	db.DB.Model(&userdao.User{}).Where("account = ?", fingerprintId).Find(&user)
@@ -281,11 +285,13 @@ func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 	if len(nickname) == 0 {
 		nickname = req.Email
 	}
+	secret := randomStr(32)
 	u := &userdao.User{
-		Account:  req.Email,
-		Password: userdao.PasswordHash(req.Password),
-		Email:    req.Email,
-		Nickname: nickname,
+		Account:              req.Email,
+		Password:             userdao.PasswordHash(req.Password),
+		Email:                req.Email,
+		Nickname:             nickname,
+		MessageDeliverSecret: secret,
 		//Avatar:   nil,
 	}
 	err = userdao.UserInfoDao.AddUser(u)

@@ -46,6 +46,18 @@ type SessionRequest struct {
 	To int64
 }
 
+type GetTicketRequest struct {
+	To string
+}
+
+type TicketResponse struct {
+	Ticket string
+}
+
+type SessionBlackListRequest struct {
+	blackList []string
+}
+
 type SessionResponse struct {
 	Uid1        int64
 	Uid2        int64

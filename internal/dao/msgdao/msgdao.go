@@ -56,6 +56,15 @@ type ChatMsgDao interface {
 
 type SessionDao interface {
 	GetSession(uid1 int64, uid2 int64) (*Session, error)
+
+	GetUserBlackList(uid string) ([]string, error)
+	GetUserWhiteList(uid string) ([]string, error)
+	IsUserInBlackList(owner string, target string) (bool, error)
+	IsUserInWhiteList(owner string, target string) (bool, error)
+	IsJustReceiveMessageFromContact(uid string) (bool, error)
+	UpdateUserWhiteList(uid string, whiteList []string) error
+	UpdateUsrBlackList(uid string, blackList []string) error
+
 	CreateSession(uid1 int64, uid2 int64, updateAt int64) (*Session, error)
 	UpdateOrCreateSession(uid1 int64, uid2 int64, sender int64, mid int64, sendAt int64) error
 	GetRecentSession(uid int64, updateBefore int64, pageSize int64) ([]*Session, error)
