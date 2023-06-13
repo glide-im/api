@@ -8,6 +8,7 @@ import (
 	"github.com/glide-im/api/internal/dao/msgdao"
 	"github.com/glide-im/api/internal/dao/userdao"
 	"github.com/glide-im/api/internal/dao/wrapper/category"
+	"github.com/glide-im/api/internal/dao/wrapper/relative_user"
 	"github.com/glide-im/api/internal/im"
 	"github.com/glide-im/api/internal/pkg/db"
 	"github.com/glide-im/glide/pkg/hash"
@@ -67,8 +68,27 @@ func (*MsgApi) GetSessionTicket(ctx *route.Context, r *GetTicketRequest) error {
 	return nil
 }
 
-func (*MsgApi) AddToBlackList(ctx *route.Context, request *SessionBlackListRequest) error {
-	// TODO
+func (*MsgApi) AddToBlackList(ctx *route.Context, request *SessionBlackIdRequest) error {
+	var relativeUserH = &relative_user.RelativeUserH{}
+	if err := relativeUserH.SetBlackLists(strconv.FormatInt(ctx.Uid, 10), request.RelativeIds); err != nil {
+		ctx.ReturnError(err.Error())
+		return nil
+	}
+
+	for _, relativeId := range request.RelativeIds {
+		secret := randomStr(32)
+		//var relativeIdStr = strconv.FormatInt(relativeId, 10)
+		relativeIdInt64, _ := strconv.ParseInt(relativeId, 10, 64)
+		userdao.Dao.UpdateSecret(relativeIdInt64, secret)
+		im.IM.UpdateClientSecret(relativeId, secret)
+	}
+
+	im.IM.EnqueueMessage(strconv.FormatInt(ctx.Uid, 10), "0", messages.NewMessage(0, "notify.update.secret", struct {
+		SystemMessage string `json:"system_message"`
+	}{
+		SystemMessage: "系统更新黑名单",
+	}))
+	ctx.ReturnSuccess(nil)
 	return nil
 }
 
@@ -76,13 +96,14 @@ func (*MsgApi) AddToWhiteList(ctx *route.Context, request *SessionBlackListReque
 	// TODO
 	return nil
 }
-func (*MsgApi) RemoveFromWhiteList(ctx *route.Context, request *SessionBlackListRequest) error {
-	// TODO
+func (*MsgApi) RemoveFromWhiteList(ctx *route.Context, request *SessionBlackIdRequest) error {
 	return nil
 }
 
-func (*MsgApi) RemoveFromBlackList(ctx *route.Context, request *SessionBlackListRequest) error {
-	// TODO
+func (*MsgApi) RemoveFromBlackList(ctx *route.Context, request *SessionBlackIdRequest) error {
+	var relativeUserH = &relative_user.RelativeUserH{}
+	relativeUserH.RemoveBlackLists(strconv.FormatInt(ctx.Uid, 10), request.RelativeIds)
+	ctx.ReturnSuccess(nil)
 	return nil
 }
 
@@ -102,6 +123,7 @@ func (*MsgApi) GetWhiteList(ctx *route.Context) error {
 	return nil
 }
 
+/// TODO 此方法暂时无需操作和调用
 func (*MsgApi) UpdateBlackList(ctx *route.Context, request *SessionBlackListRequest) error {
 
 	var failed []string

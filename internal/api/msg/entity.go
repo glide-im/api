@@ -58,6 +58,10 @@ type SessionBlackListRequest struct {
 	blackList []string
 }
 
+type SessionBlackIdRequest struct {
+	RelativeIds []string `json:"relative_ids" validate:"dive,required,oneof=1 2"`
+}
+
 type SessionResponse struct {
 	Uid1        int64
 	Uid2        int64

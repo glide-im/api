@@ -1,5 +1,7 @@
 package msgdao
 
+import "github.com/glide-im/api/internal/dao/wrapper/relative_user"
+
 var instance MsgDao
 
 func init() {
@@ -57,7 +59,7 @@ type ChatMsgDao interface {
 type SessionDao interface {
 	GetSession(uid1 int64, uid2 int64) (*Session, error)
 
-	GetUserBlackList(uid string) ([]string, error)
+	GetUserBlackList(uid string) ([]relative_user.RelativeUser, error)
 	GetUserWhiteList(uid string) ([]string, error)
 	IsUserInBlackList(owner string, target string) (bool, error)
 	IsUserInWhiteList(owner string, target string) (bool, error)

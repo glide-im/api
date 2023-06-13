@@ -12,15 +12,15 @@ QINIU_UPLOAD_URL=""
 QINIU_UPLOAD_DIR=""
 
 [IMRpcService]
-Addr = "127.0.0.1"
+Addr = "81.71.162.89"
 Port = 8092
 Name = "im_rpc_server"
 
 [MySql]
-Host = "127.0.0.1"
+Host = "81.71.162.89"
 Port = 3306
 Username = "go_im_test"
-Password = ""
+Password = "N5zJxcFKMXLzWtAc"
 Db = "go_im_test"
 Charset = "utf8mb4"
 

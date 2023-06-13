@@ -65,6 +65,10 @@ func (i *Context) ReturnSuccess(data interface{}) {
 	i.R(messages.NewMessage(i.Seq, comm.ActionSuccess, data))
 }
 
+func (i *Context) ReturnError(message string) {
+	i.R(messages.NewMessage(i.Seq, comm.ActionFailed, message))
+}
+
 type IRoute interface {
 	handle(path path, request *Context, data interface{}) error
 }

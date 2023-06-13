@@ -3,6 +3,7 @@ package msgdao
 import (
 	"fmt"
 	"github.com/glide-im/api/internal/dao/common"
+	"github.com/glide-im/api/internal/dao/wrapper/relative_user"
 	"github.com/glide-im/api/internal/pkg/db"
 	"github.com/glide-im/glide/pkg/logger"
 	"github.com/go-redis/redis"
@@ -78,12 +79,15 @@ func (s *sessionDaoImpl) IsJustReceiveMessageFromContact(uid string) (bool, erro
 }
 
 func (s *sessionDaoImpl) IsUserInBlackList(uid string, target string) (bool, error) {
-	return true, nil
+	var relativeUserH = &relative_user.RelativeUserH{}
+	var isExist = relativeUserH.IsUserInBlackList(uid, target)
+	return isExist, nil
 }
 
-func (s *sessionDaoImpl) GetUserBlackList(uid string) ([]string, error) {
-
-	return []string{}, nil
+func (s *sessionDaoImpl) GetUserBlackList(uid string) ([]relative_user.RelativeUser, error) {
+	var relativeUserH = &relative_user.RelativeUserH{}
+	var relativeUsers = relativeUserH.GetBlackLists(uid)
+	return relativeUsers, nil
 }
 
 func (s *sessionDaoImpl) GetUserWhiteList(uid string) ([]string, error) {
