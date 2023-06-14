@@ -123,7 +123,7 @@ func (*MsgApi) GetWhiteList(ctx *route.Context) error {
 	return nil
 }
 
-/// TODO 此方法暂时无需操作和调用
+// / TODO 此方法暂时无需操作和调用
 func (*MsgApi) UpdateBlackList(ctx *route.Context, request *SessionBlackListRequest) error {
 
 	var failed []string

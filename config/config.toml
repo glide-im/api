@@ -2,6 +2,7 @@
 Addr = "0.0.0.0"
 Port = 8081
 JwtSecret = "secret"
+IMServerSecret = "secret_key"
 
 [Qiniu]
 QINIU_SK=""

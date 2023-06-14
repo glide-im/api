@@ -73,10 +73,42 @@ func (*AuthApi) AuthToken(ctx *route.Context, req *AuthTokenRequest) error {
 		return ErrInvalidToken
 	}
 	uid, err := strconv.ParseInt(result.Uid, 10, 64)
+
+	user, err := userdao.Dao.GetUser(uid)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+	secret := user.MessageDeliverSecret
+	if user.MessageDeliverSecret == "" {
+		secret = randomStr(32)
+		err = userdao.Dao.UpdateSecret(user.Uid, secret)
+		if err != nil {
+			return err
+		}
+	}
+
+	credentials := gate.ClientAuthCredentials{
+		Type:       0,
+		UserID:     strconv.FormatInt(uid, 10),
+		DeviceID:   strconv.FormatInt(ctx.Device, 10),
+		DeviceName: "",
+		Secrets: &gate.ClientSecrets{
+			MessageDeliverSecret: secret,
+		},
+		ConnectionID: "",
+		Timestamp:    time.Now().UnixMilli(),
+	}
+
+	credential, err := auth.GenerateCredentials(&credentials)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+
 	resp := AuthResponse{
-		Token:   result.Token,
-		Uid:     uid,
-		Servers: host,
+		Credential: credential,
+		Token:      result.Token,
+		Uid:        uid,
+		Servers:    host,
 	}
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, resp))
 	return nil
@@ -124,6 +156,14 @@ func (*AuthApi) SignInV2(ctx *route.Context, request *SignInRequest) error {
 		return comm2.NewDbErr(err)
 	}
 
+	if user.MessageDeliverSecret == "" {
+		secret := randomStr(32)
+		err = userdao.Dao.UpdateSecret(user.Uid, secret)
+		if err != nil {
+			return err
+		}
+	}
+
 	credentials := gate.ClientAuthCredentials{
 		Type:       0,
 		UserID:     strconv.FormatInt(user.Uid, 10),
@@ -136,15 +176,20 @@ func (*AuthApi) SignInV2(ctx *route.Context, request *SignInRequest) error {
 		Timestamp:    time.Now().UnixMilli(),
 	}
 
-	token, err := auth.GenerateCredentials(&credentials)
+	credential, err := auth.GenerateCredentials(&credentials)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+
+	token, err := auth.GenerateTokenExpire(user.Uid, request.Device, 24*3)
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
 
 	tk := AuthResponse{
 		Uid:        user.Uid,
-		Token:      "",
-		Credential: token,
+		Token:      token,
+		Credential: credential,
 		Servers:    host,
 		NickName:   user.Nickname,
 		Email:      user.Email,
@@ -198,11 +243,29 @@ func (*AuthApi) GuestRegister(ctx *route.Context, req *GuestRegisterRequest) err
 
 	token, err := auth.GenerateTokenExpire(user.Uid, auth.GUEST_DEVICE, 24*7)
 
+	credentials := gate.ClientAuthCredentials{
+		Type:       0,
+		UserID:     strconv.FormatInt(user.Uid, 10),
+		DeviceID:   strconv.FormatInt(auth.GUEST_DEVICE, 10),
+		DeviceName: "",
+		Secrets: &gate.ClientSecrets{
+			MessageDeliverSecret: secret,
+		},
+		ConnectionID: "",
+		Timestamp:    time.Now().UnixMilli(),
+	}
+
+	credential, err := auth.GenerateCredentials(&credentials)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
+
 	tk := AuthResponse{
-		Uid:      user.Uid,
-		Token:    token,
-		Servers:  host,
-		NickName: user.Nickname,
+		Credential: credential,
+		Uid:        user.Uid,
+		Token:      token,
+		Servers:    host,
+		NickName:   user.Nickname,
 	}
 	ctx.ReturnSuccess(&tk)
 	return nil
@@ -254,12 +317,29 @@ func (*AuthApi) GuestRegisterV2(ctx *route.Context, req *GuestRegisterV2Request)
 
 	token, err := auth.GenerateTokenExpire(user.Uid, 3, 24*7)
 
+	credentials := gate.ClientAuthCredentials{
+		Type:       0,
+		UserID:     strconv.FormatInt(user.Uid, 10),
+		DeviceID:   strconv.FormatInt(auth.GUEST_DEVICE, 10),
+		DeviceName: "",
+		Secrets: &gate.ClientSecrets{
+			MessageDeliverSecret: secret,
+		},
+		ConnectionID: "",
+		Timestamp:    time.Now().UnixMilli(),
+	}
+
+	credential, err := auth.GenerateCredentials(&credentials)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
 	tk := GuestAuthResponse{
-		Uid:      user.Uid,
-		Token:    token,
-		Servers:  host,
-		AppID:    app_id,
-		NickName: user.Nickname,
+		Credential: credential,
+		Uid:        user.Uid,
+		Token:      token,
+		Servers:    host,
+		AppID:      app_id,
+		NickName:   user.Nickname,
 	}
 	ctx.ReturnSuccess(&tk)
 	return nil

@@ -62,11 +62,12 @@ type AuthResponse struct {
 
 // GuestAuthResponse login or register result
 type GuestAuthResponse struct {
-	Token    string   `json:"token"`
-	Uid      int64    `json:"uid"`
-	Servers  []string `json:"servers"`
-	AppID    int64    `json:"app_id"`
-	NickName string   `json:"nick_name"`
+	Token      string                    `json:"token"`
+	Uid        int64                     `json:"uid"`
+	Servers    []string                  `json:"servers"`
+	AppID      int64                     `json:"app_id"`
+	NickName   string                    `json:"nick_name"`
+	Credential *gate.EncryptedCredential `json:"credential,omitempty"`
 }
 
 func (request *GuestRegisterV2Request) Validate() error {

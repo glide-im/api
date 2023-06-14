@@ -22,9 +22,10 @@ type QiniuConfigConf struct {
 }
 
 type ApiHttpConf struct {
-	Addr      string
-	Port      int
-	JwtSecret string
+	Addr           string
+	Port           int
+	JwtSecret      string
+	IMServerSecret string
 }
 
 type IMRpcServerConf struct {

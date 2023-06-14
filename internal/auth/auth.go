@@ -1,8 +1,10 @@
 package auth
 
 import (
+	"crypto/sha512"
 	"errors"
 	"fmt"
+	"github.com/glide-im/api/internal/config"
 	"github.com/glide-im/glide/pkg/auth"
 	"github.com/glide-im/glide/pkg/auth/jwt_auth"
 	"github.com/glide-im/glide/pkg/gate"
@@ -67,7 +69,8 @@ func GenerateTokenExpire(uid int64, device int64, expireHour int64) (string, err
 
 func GenerateCredentials(c *gate.ClientAuthCredentials) (*gate.EncryptedCredential, error) {
 
-	cbcCrypto := gate.NewAesCBCCrypto([]byte("secret_key"))
+	key := sha512.New().Sum([]byte(config.ApiHttp.IMServerSecret))
+	cbcCrypto := gate.NewAesCBCCrypto(key)
 	encryptCredentials, err := cbcCrypto.EncryptCredentials(c)
 	if err != nil {
 		return nil, err
