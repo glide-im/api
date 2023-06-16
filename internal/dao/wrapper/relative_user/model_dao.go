@@ -57,5 +57,5 @@ func (m *RelativeUserH) GetBlackLists(primaryUid string) []RelativeUser {
 }
 
 func (m *RelativeUserH) IsUserInBlackList(primaryUid string, relativeUid string) bool {
-	return db.DB.Model(&RelativeUser{}).Where("primary_uid = ? and relative_id = ? and type = ?", primaryUid, relativeUid, BLACK_TYPE).RowsAffected > 0
+	return db.DB.Model(&RelativeUser{}).Where("primary_uid = ? and relative_id = ? and type = ?", primaryUid, relativeUid, BLACK_TYPE).First(&RelativeUser{}).RowsAffected > 0
 }
