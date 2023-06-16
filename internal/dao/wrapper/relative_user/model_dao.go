@@ -10,7 +10,7 @@ type RelativeUser struct {
 	gorm.Model
 	Id          int64            `json:"id"`
 	PrimaryUid  string           `json:"primary_uid"`
-	RelativeUid string           `json:"relative_id"`
+	RelativeUid string           `json:"relative_uid"`
 	Type        int8             `json:"type"`
 	UserInfo    userdao.TripUser `json:"user_info" gorm:"foreignKey:RelativeUid;references:Uid"`
 }
@@ -57,5 +57,5 @@ func (m *RelativeUserH) GetBlackLists(primaryUid string) []RelativeUser {
 }
 
 func (m *RelativeUserH) IsUserInBlackList(primaryUid string, relativeUid string) bool {
-	return db.DB.Model(&RelativeUser{}).Where("primary_uid = ? and relative_id = ? and type = ?", primaryUid, relativeUid, BLACK_TYPE).First(&RelativeUser{}).RowsAffected > 0
+	return db.DB.Model(&RelativeUser{}).Where("primary_uid = ? and relative_uid = ? and type = ?", primaryUid, relativeUid, BLACK_TYPE).First(&RelativeUser{}).RowsAffected > 0
 }
