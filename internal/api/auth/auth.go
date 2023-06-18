@@ -160,6 +160,7 @@ func (*AuthApi) SignInV2(ctx *route.Context, request *SignInRequest) error {
 	if secret == "" {
 		secret = randomStr(32)
 		err = userdao.Dao.UpdateSecret(user.Uid, secret)
+		user.MessageDeliverSecret = secret
 		if err != nil {
 			return err
 		}
