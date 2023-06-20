@@ -162,6 +162,7 @@ func (*AuthApi) SignInV2(ctx *route.Context, request *SignInRequest) error {
 		if err != nil {
 			return err
 		}
+		user.MessageDeliverSecret = secret
 	}
 
 	credentials := gate.ClientAuthCredentials{
