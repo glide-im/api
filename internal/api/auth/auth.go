@@ -156,13 +156,13 @@ func (*AuthApi) SignInV2(ctx *route.Context, request *SignInRequest) error {
 		return comm2.NewDbErr(err)
 	}
 
-	if user.MessageDeliverSecret == "" {
-		secret := randomStr(32)
+	secret := user.MessageDeliverSecret
+	if secret == "" {
+		secret = randomStr(32)
 		err = userdao.Dao.UpdateSecret(user.Uid, secret)
 		if err != nil {
 			return err
 		}
-		user.MessageDeliverSecret = secret
 	}
 
 	credentials := gate.ClientAuthCredentials{
@@ -171,7 +171,7 @@ func (*AuthApi) SignInV2(ctx *route.Context, request *SignInRequest) error {
 		DeviceID:   strconv.FormatInt(request.Device, 10),
 		DeviceName: "",
 		Secrets: &gate.ClientSecrets{
-			MessageDeliverSecret: user.MessageDeliverSecret,
+			MessageDeliverSecret: secret,
 		},
 		ConnectionID: "",
 		Timestamp:    time.Now().UnixMilli(),

@@ -91,7 +91,7 @@ func (d *UserInfoDaoImpl) GetUidInfoByLogin(account string, password string) (Us
 	var user User
 	query := db.DB.Model(&User{}).
 		Where("email = ?", account).
-		Select("uid, nickname, email, password").
+		Select("uid, nickname, email, password, message_deliver_secret").
 		Find(&user)
 	if query.Error != nil {
 		return user, query.Error
