@@ -4,6 +4,10 @@ Port = 8081
 JwtSecret = "secret"
 IMServerSecret = "secret_key"
 
+[Kafka]
+EnableMessageStorage = false
+Address = []
+
 [Qiniu]
 QINIU_SK=""
 QINIU_AK=""

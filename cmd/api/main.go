@@ -23,6 +23,10 @@ func main() {
 	im.MustSetupClient(config.IMRpcServer.Addr, config.IMRpcServer.Port, config.IMRpcServer.Name)
 	err := api.Run(config.ApiHttp.Addr, config.ApiHttp.Port)
 
+	if config.Kafka.EnableMessageStorage {
+		im.MustInitMessageStorage(config.Kafka.Address)
+	}
+
 	if err != nil {
 		panic(err)
 	}
