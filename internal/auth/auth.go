@@ -14,7 +14,7 @@ import (
 var jwtAuth *jwt_auth.JwtAuthorize
 
 var (
-	GUEST_DEVICE   = int64(3)
+	GUEST_DEVICE   = int64(-1)
 	MOBILE_DEVICE  = int64(2)
 	DEFAULT_DEVICE = int64(1)
 )

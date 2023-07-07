@@ -5,6 +5,7 @@ import (
 	"fmt"
 	comm2 "github.com/glide-im/api/internal/api/comm"
 	"github.com/glide-im/api/internal/api/router"
+	"github.com/glide-im/api/internal/auth"
 	"github.com/glide-im/api/internal/dao/msgdao"
 	"github.com/glide-im/api/internal/dao/userdao"
 	"github.com/glide-im/api/internal/dao/wrapper/category"
@@ -29,13 +30,17 @@ func (*MsgApi) ReadMessage(ctx *route.Context, request *ReadMessageRequest) erro
 
 func (*MsgApi) GetSessionTicket(ctx *route.Context, r *GetTicketRequest) error {
 
+	if ctx.Device == auth.GUEST_DEVICE && r.To == "545425" {
+		return errors.New("对方不接收临时用户的消息")
+	}
+
 	myId := strconv.FormatInt(ctx.Uid, 10)
 	inBlackList, err := msgdao.SessionDaoImpl.IsUserInBlackList(r.To, myId)
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
 	if inBlackList {
-		return errors.New("your are in black list")
+		return errors.New("对方把你加入了黑名单")
 	}
 
 	justContact, err := msgdao.SessionDaoImpl.IsJustReceiveMessageFromContact(r.To)
@@ -48,7 +53,7 @@ func (*MsgApi) GetSessionTicket(ctx *route.Context, r *GetTicketRequest) error {
 			return comm2.NewDbErr(err)
 		}
 		if !inWhiteList {
-			return errors.New("your are not in white list")
+			return errors.New("对方只允许好友发送消息")
 		}
 	}
 
