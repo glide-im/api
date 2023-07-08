@@ -124,7 +124,7 @@ func getContext(ctx *gin.Context) *route.Context {
 	}
 	a, exists := ctx.Get(CtxKeyAuthInfo)
 	if exists {
-		authInfo, ok := a.(*auth.AuthInfo)
+		authInfo, ok := a.(*auth.JwtClaims)
 		if ok {
 			info.Uid = authInfo.Uid
 			info.Device = authInfo.Device

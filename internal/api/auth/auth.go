@@ -68,13 +68,7 @@ type AuthApi struct {
 
 func (*AuthApi) AuthToken(ctx *route.Context, req *AuthTokenRequest) error {
 
-	result, err := auth.Auth(ctx.Uid, ctx.Device, req.Token)
-	if err != nil {
-		return ErrInvalidToken
-	}
-	uid, err := strconv.ParseInt(result.Uid, 10, 64)
-
-	user, err := userdao.Dao.GetUser(uid)
+	user, err := userdao.Dao.GetUser(ctx.Uid)
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
@@ -89,7 +83,7 @@ func (*AuthApi) AuthToken(ctx *route.Context, req *AuthTokenRequest) error {
 
 	credentials := gate.ClientAuthCredentials{
 		Type:       0,
-		UserID:     strconv.FormatInt(uid, 10),
+		UserID:     strconv.FormatInt(ctx.Uid, 10),
 		DeviceID:   strconv.FormatInt(ctx.Device, 10),
 		DeviceName: "",
 		Secrets: &gate.ClientSecrets{
@@ -106,8 +100,8 @@ func (*AuthApi) AuthToken(ctx *route.Context, req *AuthTokenRequest) error {
 
 	resp := AuthResponse{
 		Credential: credential,
-		Token:      result.Token,
-		Uid:        uid,
+		Token:      "",
+		Uid:        ctx.Uid,
 		Servers:    host,
 	}
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, resp))
