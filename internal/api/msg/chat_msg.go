@@ -151,10 +151,10 @@ func (*ChatMsgApi) GetOfflineMessage(ctx *route.Context) error {
 
 func messageModel2MessageResponse(m *msgdao.ChatMessage) *MessageResponse {
 	return &MessageResponse{
-		Mid:      m.MID,
-		CliSeq:   m.CliSeq,
-		From:     m.From,
-		To:       m.To,
+		Mid:    m.MID,
+		CliSeq: m.CliSeq,
+		//From:     m.From,
+		//To:       m.To,
 		Type:     m.Type,
 		SendAt:   m.SendAt,
 		CreateAt: m.CreateAt,
