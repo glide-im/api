@@ -3,7 +3,6 @@ package auth
 import (
 	"crypto/sha512"
 	"errors"
-	"fmt"
 	"github.com/glide-im/api/internal/config"
 	"github.com/glide-im/glide/pkg/auth"
 	"github.com/glide-im/glide/pkg/auth/jwt_auth"
@@ -30,7 +29,6 @@ func ParseToken(token string) (*AuthInfo, error) {
 		return nil, errors.New("invalid auth info")
 	}
 
-	fmt.Println("resp", resp)
 	parseInt, _ := strconv.ParseInt(resp.Uid, 10, 64)
 	i, _ := strconv.ParseInt(resp.Device, 10, 64)
 	return &AuthInfo{
@@ -62,7 +60,6 @@ func GenerateTokenExpire(uid int64, device int64, expireHour int64) (string, err
 		UID:    strconv.FormatInt(uid, 10),
 		Device: strconv.FormatInt(device, 10),
 	}
-	fmt.Println("strconv.FormatInt(device, 10)", strconv.FormatInt(device, 10))
 	token, err := jwtAuth.GetToken(jai)
 	return token.Token, err
 }

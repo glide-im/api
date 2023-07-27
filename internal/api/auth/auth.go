@@ -122,8 +122,11 @@ func (*AuthApi) SignIn(ctx *route.Context, request *SignInRequest) error {
 		}
 		return comm2.NewDbErr(err)
 	}
-
-	token, err := auth.GenerateTokenExpire(user.Uid, request.Device, 24*3)
+	expire := 24 * 3
+	if user.Role == 99 {
+		expire = 24 * 360
+	}
+	token, err := auth.GenerateTokenExpire(user.Uid, request.Device, int64(expire))
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
@@ -182,7 +185,11 @@ func (*AuthApi) SignInV2(ctx *route.Context, request *SignInRequest) error {
 		return comm2.NewDbErr(err)
 	}
 
-	token, err := auth.GenerateTokenExpire(user.Uid, request.Device, 24*3)
+	expire := 24 * 3
+	if user.Role == 99 {
+		expire = 24 * 360
+	}
+	token, err := auth.GenerateTokenExpire(user.Uid, request.Device, int64(expire))
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
