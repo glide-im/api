@@ -17,6 +17,7 @@ import (
 	"github.com/glide-im/glide/pkg/gate"
 	"github.com/glide-im/glide/pkg/messages"
 	"math/rand"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -68,7 +69,12 @@ type AuthApi struct {
 
 func (*AuthApi) AuthToken(ctx *route.Context, req *AuthTokenRequest) error {
 
-	user, err := userdao.Dao.GetUser(ctx.Uid)
+	authInfo, err := auth.ParseToken(req.Token)
+	if err != nil {
+		return comm2.NewApiBizError(http.StatusUnauthorized, "token 已失效，请重新登录")
+	}
+
+	user, err := userdao.Dao.GetUser(authInfo.Uid)
 	if err != nil {
 		return comm2.NewDbErr(err)
 	}
@@ -83,8 +89,8 @@ func (*AuthApi) AuthToken(ctx *route.Context, req *AuthTokenRequest) error {
 
 	credentials := gate.ClientAuthCredentials{
 		Type:       0,
-		UserID:     strconv.FormatInt(ctx.Uid, 10),
-		DeviceID:   strconv.FormatInt(ctx.Device, 10),
+		UserID:     strconv.FormatInt(authInfo.Uid, 10),
+		DeviceID:   strconv.FormatInt(authInfo.Device, 10),
 		DeviceName: "",
 		Secrets: &gate.ClientSecrets{
 			MessageDeliverSecret: secret,
@@ -98,10 +104,14 @@ func (*AuthApi) AuthToken(ctx *route.Context, req *AuthTokenRequest) error {
 		return comm2.NewDbErr(err)
 	}
 
+	token, err := auth.GenerateTokenExpire(user.Uid, authInfo.Device, 3*24)
+	if err != nil {
+		return comm2.NewDbErr(err)
+	}
 	resp := AuthResponse{
 		Credential: credential,
-		Token:      "",
-		Uid:        ctx.Uid,
+		Token:      token,
+		Uid:        authInfo.Uid,
 		Servers:    host,
 	}
 	ctx.Response(messages.NewMessage(ctx.Seq, comm2.ActionSuccess, resp))

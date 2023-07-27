@@ -30,7 +30,7 @@ func (*MsgApi) ReadMessage(ctx *route.Context, request *ReadMessageRequest) erro
 
 func (*MsgApi) GetSessionTicket(ctx *route.Context, r *GetTicketRequest) error {
 
-	logger.D("%d get ticket to %s", ctx.Device, r.To)
+	logger.D("%d(%d) get ticket to %s", ctx.Uid, ctx.Device, r.To)
 
 	if ctx.Device == auth.GUEST_DEVICE && r.To == "545425" {
 		return errors.New("对方不接收临时用户的消息")
