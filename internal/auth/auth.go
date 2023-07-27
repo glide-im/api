@@ -2,15 +2,10 @@ package auth
 
 import (
 	"crypto/sha512"
-	"errors"
 	"github.com/glide-im/api/internal/config"
-	"github.com/glide-im/glide/pkg/auth"
-	"github.com/glide-im/glide/pkg/auth/jwt_auth"
 	"github.com/glide-im/glide/pkg/gate"
-	"strconv"
+	"github.com/golang-jwt/jwt"
 )
-
-var jwtAuth *jwt_auth.JwtAuthorize
 
 var (
 	GUEST_DEVICE   = int64(-1)
@@ -18,50 +13,38 @@ var (
 	DEFAULT_DEVICE = int64(1)
 )
 
-func ParseToken(token string) (*AuthInfo, error) {
-	var a = &jwt_auth.JwtAuthInfo{}
-	result, err := jwtAuth.Auth(a, &auth.Token{Token: token})
+func SetJwtSecret(secret []byte) {
+	jwtSecret = secret
+}
+
+type JwtClaims struct {
+	jwt.StandardClaims
+	Uid    int64 `json:"uid"`
+	Device int64 `json:"device"`
+	Ver    int64 `json:"ver"`
+	AppId  int64 `json:"app_id"`
+}
+
+func ParseToken(token string) (*JwtClaims, error) {
+	result, err := parseJwt(token)
 	if err != nil {
 		return nil, err
 	}
-	resp, ok := result.Response.(*jwt_auth.Response)
-	if !ok {
-		return nil, errors.New("invalid auth info")
-	}
-
-	parseInt, _ := strconv.ParseInt(resp.Uid, 10, 64)
-	i, _ := strconv.ParseInt(resp.Device, 10, 64)
-	return &AuthInfo{
-		Uid:    parseInt,
-		Device: i,
+	return &JwtClaims{
+		Uid:    result.Uid,
+		Device: result.Device,
+		AppId:  result.AppId,
 	}, nil
 }
 
-func Auth(from int64, device int64, t string) (*jwt_auth.Response, error) {
-
-	jwtAuthInfo := &jwt_auth.JwtAuthInfo{
-		UID:    strconv.FormatInt(from, 10),
-		Device: strconv.FormatInt(device, 10),
-	}
-	result, err2 := jwtAuth.Auth(jwtAuthInfo, &auth.Token{Token: t})
-
-	if err2 != nil {
-		return nil, err2
-	}
-	resp, ok := result.Response.(*jwt_auth.Response)
-	if !ok {
-		return nil, err2
-	}
-	return resp, err2
-}
-
 func GenerateTokenExpire(uid int64, device int64, expireHour int64) (string, error) {
-	jai := &jwt_auth.JwtAuthInfo{
-		UID:    strconv.FormatInt(uid, 10),
-		Device: strconv.FormatInt(device, 10),
-	}
-	token, err := jwtAuth.GetToken(jai)
-	return token.Token, err
+	return genJwt(JwtClaims{
+		StandardClaims: jwt.StandardClaims{},
+		Uid:            uid,
+		Device:         device,
+		Ver:            1,
+		AppId:          1,
+	}, expireHour)
 }
 
 func GenerateCredentials(c *gate.ClientAuthCredentials) (*gate.EncryptedCredential, error) {

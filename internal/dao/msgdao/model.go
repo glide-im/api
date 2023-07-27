@@ -9,9 +9,9 @@ type ChatMessage struct {
 	// CliSeq 发送者消息 seq
 	CliSeq int64 `json:"cliSeq"`
 	// From 发送者ID
-	From int64 `json:"from"`
+	From string `json:"from"`
 	// To 接收者ID
-	To int64 `json:"to"`
+	To string `json:"to"`
 	// Type 消息类型
 	Type int32 `json:"type"`
 	// SendAt 客户端发送时间

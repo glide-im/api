@@ -10,6 +10,7 @@ var (
 	ApiHttp     *ApiHttpConf
 	IMRpcServer *IMRpcServerConf
 	Qiniu       *QiniuConfigConf
+	Kafka       *KafkaConf
 )
 
 type QiniuConfigConf struct {
@@ -19,6 +20,11 @@ type QiniuConfigConf struct {
 	QINIU_HOST       string
 	QINIU_UPLOAD_URL string
 	QINIU_UPLOAD_DIR string
+}
+
+type KafkaConf struct {
+	EnableMessageStorage bool
+	Address              []string
 }
 
 type ApiHttpConf struct {
@@ -79,6 +85,7 @@ func Load() error {
 		ApiHttp      *ApiHttpConf
 		IMRpcService *IMRpcServerConf
 		Qiniu        *QiniuConfigConf
+		Kafka        *KafkaConf
 	}{}
 
 	err = viper.Unmarshal(&c)
@@ -90,6 +97,7 @@ func Load() error {
 	ApiHttp = c.ApiHttp
 	IMRpcServer = c.IMRpcService
 	Qiniu = c.Qiniu
+	Kafka = c.Kafka
 
 	return err
 }
