@@ -22,29 +22,6 @@ import (
 	"time"
 )
 
-var avatars = []string{
-	"http://dengzii.com/static/a.webp",
-	"http://dengzii.com/static/b.webp",
-	"http://dengzii.com/static/c.webp",
-	"http://dengzii.com/static/d.webp",
-	"http://dengzii.com/static/e.webp",
-	"http://dengzii.com/static/f.webp",
-	"http://dengzii.com/static/g.webp",
-	"http://dengzii.com/static/h.webp",
-	"http://dengzii.com/static/i.webp",
-	"http://dengzii.com/static/j.webp",
-	"http://dengzii.com/static/k.webp",
-	"http://dengzii.com/static/l.webp",
-	"http://dengzii.com/static/m.webp",
-	"http://dengzii.com/static/n.webp",
-	"http://dengzii.com/static/o.webp",
-	"http://dengzii.com/static/p.webp",
-	"http://dengzii.com/static/q.webp",
-	"http://dengzii.com/static/r.webp",
-}
-
-var nicknames = []string{"佐菲", "赛文", "杰克", "艾斯", "泰罗", "雷欧", "阿斯特拉", "艾迪", "迪迦", "杰斯", "奈克斯", "梦比优斯", "盖亚", "戴拿"}
-
 type Interface interface {
 	AuthToken(info *route.Context, req *AuthTokenRequest) error
 	SignIn(info *route.Context, req *SignInRequest) error
@@ -221,15 +198,13 @@ func (*AuthApi) GuestRegister(ctx *route.Context, req *GuestRegisterRequest) err
 	avatar := req.Avatar
 	nickname := req.Nickname
 
-	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if len(avatar) == 0 {
-		avatar = avatars[rnd.Intn(len(avatars))]
+		avatar = ""
 	}
-	if len(nickname) == 0 {
-		nickname = nicknames[rnd.Intn(len(nicknames))]
-	}
-
 	account := "guest_" + randomStr(32)
+	if len(nickname) == 0 {
+		nickname = account
+	}
 
 	hash := userdao.PasswordHash("-")
 	secret := randomStr(32)
