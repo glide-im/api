@@ -42,18 +42,6 @@ func (m *GroupApi) CreateGroup(ctx *route.Context, request *CreateGroupRequest) 
 	//if err != nil {
 	//	return comm.NewDbErr(err)
 	//}
-	err = group.Interface.CreateGroup(dbGroup.Gid)
-	if err != nil {
-		return comm2.NewUnexpectedErr("create group failed", err)
-	}
-	err = group.Interface.PutMember(dbGroup.Gid, []int64{ctx.Uid})
-	if err != nil {
-		return comm2.NewUnexpectedErr("add group member failed", err)
-	}
-	err = group.Interface.UpdateMember(dbGroup.Gid, ctx.Uid, 1)
-	if err != nil {
-		return comm2.NewUnexpectedErr("create group failed", err)
-	}
 	//n := messages.NewMessage(0, comm.ActionInviteToGroup, InviteGroupMessage{Gid: dbGroup.Gid})
 	//for _, uid := range request.Member {
 	//	apidep.SendMessageIfOnline(uid, 0, n)

@@ -6,6 +6,8 @@ import (
 	"github.com/glide-im/glide/pkg/logger"
 	"github.com/glide-im/glide/pkg/messages"
 	"github.com/glide-im/glide/pkg/rpc"
+	"github.com/glide-im/glide/pkg/subscription"
+	"github.com/glide-im/glide/pkg/subscription/subscription_impl"
 	"strconv"
 )
 
@@ -48,6 +50,16 @@ type Service interface {
 
 	// UpdateClientSecret 更新用户 message deliver secret
 	UpdateClientSecret(id string, secret string) error
+
+	SubscribeChannel(uid string, channels []string) error
+
+	CreateChannel(id string) error
+
+	UpdateSubscriber(chanId string, uid string, perm subscription_impl.Permission) error
+
+	PublishChannel(channel string, message *messages.ChatMessage) error
+
+	Close()
 }
 
 // MustSetupClient 初始化 IM 服务 RPC 客户端
@@ -63,13 +75,58 @@ func MustSetupClient(addr string, port int, name string) {
 	if err != nil {
 		panic(err)
 	}
-	IM = &imServiceRpcClient{cli}
+	sub, err := client.NewSubscriptionRpcImpl(opt)
+	if err != nil {
+		panic(err)
+	}
+	IM = &imServiceRpcClient{cli, sub}
 }
 
 // TODO: optimize 2022-7-18 12:20:03 使用缓存用户连接网关等信息
 type imServiceRpcClient struct {
 	// cli 消息服务客户端, 包含群聊, 消息网关接口
 	cli *client.GatewayRpcImpl
+	sub *client.SubscriptionRpcImpl
+}
+
+func (c *imServiceRpcClient) PublishChannel(channel string, message *messages.ChatMessage) error {
+	err := c.sub.Publish(subscription.ChanID(channel), &subscription_impl.PublishMessage{
+		From:    "system",
+		Type:    subscription_impl.TypeMessage,
+		Message: messages.NewMessage(0, messages.ActionGroupMessage, message),
+	})
+	return err
+}
+
+func (c *imServiceRpcClient) UpdateSubscriber(chanId string, uid string, perm subscription_impl.Permission) error {
+	err := c.sub.UpdateSubscriber(subscription.ChanID(chanId), subscription.SubscriberID(uid), &subscription_impl.SubscriberOptions{Perm: perm})
+	return err
+}
+
+func (c *imServiceRpcClient) CreateChannel(id string) error {
+	err := c.sub.CreateChannel(subscription.ChanID(id), &subscription.ChanInfo{
+		ID:      subscription.ChanID(id),
+		Type:    subscription.ChanTypeUnknown,
+		Muted:   false,
+		Blocked: false,
+		Closed:  false,
+	})
+	return err
+}
+
+func (c *imServiceRpcClient) Close() {
+	c.cli.Close()
+	c.sub.Close()
+}
+
+func (c *imServiceRpcClient) SubscribeChannel(uid string, channels []string) error {
+	for _, channel := range channels {
+		err := c.sub.Subscribe(subscription.ChanID(channel), subscription.SubscriberID(uid), &subscription_impl.SubscriberOptions{Perm: subscription_impl.PermNone})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (c *imServiceRpcClient) UpdateClientSecret(id string, secret string) error {
