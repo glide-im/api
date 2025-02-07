@@ -211,6 +211,7 @@ func (*AuthApi) GuestRegister(ctx *route.Context, req *GuestRegisterRequest) err
 	u := &userdao.User{
 		Email:                account,
 		Account:              account,
+		Phone:                account,
 		Password:             hash,
 		Nickname:             nickname,
 		Avatar:               avatar,
