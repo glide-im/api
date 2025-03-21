@@ -360,6 +360,7 @@ func (*AuthApi) Register(ctx *route.Context, req *RegisterRequest) error {
 		Password:             userdao.PasswordHash(req.Password),
 		Email:                req.Email,
 		Nickname:             nickname,
+		Phone:                req.Email,
 		MessageDeliverSecret: secret,
 		//Avatar:   nil,
 	}
